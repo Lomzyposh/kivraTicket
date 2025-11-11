@@ -1495,11 +1495,7 @@ app.post("/api/admin/fetch-events", (req, res) => {
   });
 });
 
-// ============================================
-// UTILITY ROUTES
-// ============================================
 
-// Get currencies
 app.get("/api/currencies", (req, res) => {
   const currencies = [
     { code: "USD", symbol: "$", name: "US Dollar" },
@@ -1512,14 +1508,10 @@ app.get("/api/currencies", (req, res) => {
   res.json({ currencies });
 });
 
-// Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date() });
 });
 
-// ============================================
-// START SERVER
-// ============================================
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
