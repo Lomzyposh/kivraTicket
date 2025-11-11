@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/axios"; // <-- use your centralized axios instance
 
 const AuthContext = createContext();
 
@@ -23,9 +23,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/auth/me", {
-        withCredentials: true,
-      });
+      const response = await api.get("/auth/me"); // no /api prefix
       setUser(response.data.user);
       setError(null);
     } catch (err) {
@@ -38,11 +36,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(
-        "/api/auth/login",
-        { email, password },
-        { withCredentials: true }
-      );
+      const response = await api.post("/auth/login", { email, password });
       setUser(response.data.user);
       setError(null);
       return response.data;
@@ -54,11 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post(
-        "/api/auth/register",
-        { name, email, password },
-        { withCredentials: true }
-      );
+      const response = await api.post("/auth/register", { name, email, password });
       setUser(response.data.user);
       setError(null);
       return response.data;
@@ -70,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post("/api/auth/logout", {}, { withCredentials: true });
+      await api.post("/auth/logout");
       setUser(null);
       setError(null);
     } catch (err) {
