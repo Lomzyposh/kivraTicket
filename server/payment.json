@@ -1,0 +1,13 @@
+[
+  {
+    "method": "cashapp",
+    "recipientInfo": {
+      "email": "$sheacupcake22",
+      "phone": "",
+      "username": "$sheacupcake22",
+      "qrCode": ""
+    },
+    "isActive": true,
+    "updatedAt": { "$date": "2025-11-11T22:25:00Z" }
+  }
+]

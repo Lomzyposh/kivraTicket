@@ -177,7 +177,10 @@ const notificationSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 const Event = mongoose.model("Event", eventSchema);
 const Order = mongoose.model("Order", orderSchema);
-const CreditCardInfo = mongoose.model("CreditCardInfo", creditCardInfoSchema);
+const CreditCardInfo = mongoose.model(
+  "CreditCardInfo",
+  creditCardInfoSchema
+);
 const PaymentConfig = mongoose.model("PaymentConfig", paymentConfigSchema);
 const Notification = mongoose.model("Notification", notificationSchema);
 
@@ -333,7 +336,7 @@ if (activeConfigs.length) {
         line-height: 1.5;
       ">
         Send your payment using any of the methods below and include your
-        <strong>Order ID</strong> as the payment reference so we can verify it quickly.
+        <strong>Order ID</strong> as the payment reference so we can verify it quickly.<br><p><strong>Note:</strong>(Paypal: Family and Friends )</p>
       </p>
 
       <ul style="
@@ -906,6 +909,214 @@ app.get("/api/orders/my-orders", authMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+/**
+ * ✅ RESEND EMAIL FOR AN ORDER (USER)
+ * - If QR already sent: resend QR email
+ * - Else: resend order confirmation/payment email
+ */
+app.post(
+  "/api/orders/:orderId/resend-email",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const order = await Order.findById(req.params.orderId)
+        .populate("user")
+        .populate("event");
+
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      if (order.user._id.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const event = order.event;
+      const user = order.user;
+
+      if (!event) {
+        return res.status(400).json({
+          error:
+            "This order is missing its event details. Please contact support.",
+        });
+      }
+
+      let ok = false;
+
+      if (order.qrCodeSent && order.qrCode) {
+        // Resend QR email
+        const ticketDetails = (order.tickets || [])
+          .map(
+            (t, i) =>
+              `<li>Ticket ${i + 1}${
+                t.seatNumber ? ` - Seat: ${t.seatNumber}` : ""
+              } - ${order.currency} ${t.price}</li>`
+          )
+          .join("");
+
+        ok = await sendEmail(
+          user.email,
+          "Your GoTickets QR Code (Resent)",
+          `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #D97706;">🔁 Your Tickets Again</h1>
+            <p>Hi ${user.name},</p>
+            <p>Here is your ticket QR code again for your order.</p>
+            
+            <div style="background: #F3F4F6; padding: 20px; border-radius: 10px; margin: 20px 0;">
+              <h2 style="color: #111827; margin-top: 0;">Event Details</h2>
+              <p><strong>Event:</strong> ${event.title}</p>
+              <p><strong>Venue:</strong> ${event.venue}</p>
+              <p><strong>Date:</strong> ${new Date(
+                event.date
+              ).toLocaleDateString()}</p>
+              <p><strong>Time:</strong> ${
+                event.time || "Check ticket for details"
+              }</p>
+              <p><strong>Total Tickets:</strong> ${order.tickets.length}</p>
+              <ul>${ticketDetails}</ul>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+              <h3>Your QR Code</h3>
+              <img src="${order.qrCode}" alt="QR Code" style="max-width: 300px; border: 3px solid #D97706; border-radius: 10px;" />
+            </div>
+
+            <p style="color: #6B7280; font-size: 12px; margin-top: 30px;">
+              Order ID: ${order._id}<br>
+              If you have any questions, please contact our support team.
+            </p>
+          </div>`
+        );
+      } else {
+        // Resend confirmation / payment instructions email
+        const eventImageUrl = event.images?.[0];
+
+        const emailMessage =
+          order.paymentMethod?.type === "credit_card"
+            ? "We are still validating your card information."
+            : "We are still processing your payment.";
+
+        ok = await sendEmail(
+          user.email,
+          "Order Details - GoTickets (Resent)",
+          `
+  <div style="
+    background-color: #020617;
+    padding: 24px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #e5e7eb;
+  ">
+    <div style="
+      max-width: 640px;
+      margin: 0 auto;
+      background-color: #020617;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+      padding: 20px 22px;
+    ">
+      <h2 style="
+        margin: 0 0 12px;
+        font-size: 22px;
+        color: #fbbf24;
+      ">
+        Your order details (resent) 🎟️
+      </h2>
+
+      <p style="
+        margin: 0 0 16px;
+        font-size: 14px;
+        line-height: 1.6;
+      ">
+        ${emailMessage}
+      </p>
+
+      ${
+        eventImageUrl
+          ? `
+        <div style="
+          margin: 10px 0 18px;
+          border-radius: 12px;
+          overflow: hidden;
+          border: 1px solid #1f2937;
+        ">
+          <img
+            src="${eventImageUrl}"
+            alt="${event.title}"
+            style="display: block; width: 100%; max-height: 260px; object-fit: cover;"
+          />
+        </div>
+      `
+          : ""
+      }
+
+      <div style="
+        margin: 0 0 18px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background-color: #030712;
+        border: 1px solid #1f2937;
+      ">
+        <p style="
+          margin: 0 0 4px;
+          font-size: 13px;
+          color: #9ca3af;
+        ">
+          Order summary
+        </p>
+        <p style="margin: 0; font-size: 14px;">
+          <strong>Event:</strong> ${event.title}
+        </p>
+        <p style="margin: 4px 0; font-size: 14px;">
+          <strong>Order ID:</strong> ${order._id}
+        </p>
+        <p style="margin: 4px 0 0; font-size: 14px;">
+          <strong>Total:</strong> ${order.currency} ${String(
+            order.totalAmount
+          )}
+        </p>
+      </div>
+
+      ${paymentInstructionsHtml || ""}
+
+      <p style="
+        margin: 18px 0 0;
+        font-size: 12px;
+        color: #6b7280;
+      ">
+        If you still don't see our emails, please check your spam/junk folder.
+      </p>
+    </div>
+  </div>
+          `
+        );
+      }
+
+      if (!ok) {
+        return res.status(500).json({
+          error:
+            "We couldn't resend the email right now. Please try again later.",
+        });
+      }
+
+      // Optional: log notification for admin
+      await Notification.create({
+        type: "other",
+        user: user._id,
+        order: order._id,
+        message: `User requested resend email for order ${order._id}`,
+      });
+
+      res.json({
+        message:
+          "Email resent successfully. Please check your inbox and spam folder.",
+      });
+    } catch (error) {
+      console.error("Resend email error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  }
+);
 
 // ============================================
 // PAYMENT METHODS ROUTES

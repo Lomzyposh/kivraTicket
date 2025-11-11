@@ -10,6 +10,7 @@ import {
   CreditCard,
   Banknote,
   RefreshCw,
+  Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
@@ -64,8 +65,7 @@ function humanPaymentMethod(method) {
 const STATUS_TAGS = {
   pending: {
     label: "Pending",
-    className:
-      "bg-amber-500/10 text-amber-300 border border-amber-500/40",
+    className: "bg-amber-500/10 text-amber-300 border border-amber-500/40",
   },
   confirmed: {
     label: "Confirmed",
@@ -78,8 +78,7 @@ const STATUS_TAGS = {
   },
   refunded: {
     label: "Refunded",
-    className:
-      "bg-slate-700/40 text-slate-200 border border-slate-500/60",
+    className: "bg-slate-700/40 text-slate-200 border border-slate-500/60",
   },
 };
 
@@ -96,6 +95,9 @@ export default function MyOrders() {
   const [refundReason, setRefundReason] = useState("");
   const [refundLoading, setRefundLoading] = useState(false);
   const [refundMessage, setRefundMessage] = useState("");
+
+  // per-order resend status: { [orderId]: { loading, message, error } }
+  const [resendStatus, setResendStatus] = useState({});
 
   useEffect(() => {
     if (!user) {
@@ -208,6 +210,35 @@ export default function MyOrders() {
     }
   };
 
+  const handleResendEmail = async (orderId) => {
+    setResendStatus((prev) => ({
+      ...prev,
+      [orderId]: { ...(prev[orderId] || {}), loading: true, message: "", error: "" },
+    }));
+
+    try {
+      const res = await api.post(`/orders/${orderId}/resend-email`);
+      const message =
+        res.data?.message ||
+        "Email resent successfully. Please check your inbox and spam folder.";
+
+      setResendStatus((prev) => ({
+        ...prev,
+        [orderId]: { ...(prev[orderId] || {}), loading: false, message, error: "" },
+      }));
+    } catch (err) {
+      const errorMsg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "We couldn’t resend the email right now. Please try again.";
+
+      setResendStatus((prev) => ({
+        ...prev,
+        [orderId]: { ...(prev[orderId] || {}), loading: false, message: "", error: errorMsg },
+      }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       <div className="max-w-5xl mx-auto px-4 pt-20 pb-16 md:px-8 lg:px-10 lg:pt-24">
@@ -303,16 +334,19 @@ export default function MyOrders() {
               const event = order.event || {};
               const currency = order.currency || event.price?.currency || "USD";
               const symbol = currencySymbol(currency);
-              const statusInfo =
-                STATUS_TAGS[order.status] ||
-                STATUS_TAGS.pending;
-
+              const statusInfo = STATUS_TAGS[order.status] || STATUS_TAGS.pending;
               const showQr = order.qrCodeSent && order.qrCode;
 
               const canRequestRefund =
                 !order.refundRequested &&
                 order.status !== "refunded" &&
                 order.status !== "cancelled";
+
+              const thisResend = resendStatus[order._id] || {
+                loading: false,
+                message: "",
+                error: "",
+              };
 
               return (
                 <div
@@ -403,9 +437,7 @@ export default function MyOrders() {
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-slate-300">
-                            Total amount
-                          </span>
+                          <span className="text-slate-300">Total amount</span>
                           <span className="text-amber-300 font-semibold">
                             {symbol}
                             {Number(order.totalAmount || 0).toLocaleString()}
@@ -439,9 +471,7 @@ export default function MyOrders() {
                           <p className="font-semibold mb-1">
                             Your refund request
                           </p>
-                          <p className="text-amber-50">
-                            {order.refundReason}
-                          </p>
+                          <p className="text-amber-50">{order.refundReason}</p>
                         </div>
                       )}
 
@@ -452,7 +482,7 @@ export default function MyOrders() {
                       )}
                     </div>
 
-                    {/* Right: QR + refund */}
+                    {/* Right: QR + refund + resend */}
                     <div className="space-y-3">
                       <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-3 flex flex-col items-center justify-center text-center">
                         {showQr ? (
@@ -484,6 +514,42 @@ export default function MyOrders() {
                             </p>
                           </>
                         )}
+
+                        {/* Resend email section */}
+                        <div className="mt-3 w-full">
+                          <p className="text-[11px] text-slate-400">
+                            Didn&apos;t receive the mail?
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => handleResendEmail(order._id)}
+                            disabled={thisResend.loading}
+                            className="mt-1 inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900 hover:border-amber-500/70 hover:bg-slate-900/80 disabled:opacity-60 text-[11px] text-slate-200 px-3 py-1.5 transition-all"
+                          >
+                            {thisResend.loading ? (
+                              <>
+                                <span className="h-3 w-3 border-2 border-slate-500 border-t-transparent rounded-full animate-spin" />
+                                Sending...
+                              </>
+                            ) : (
+                              <>
+                                <Mail className="w-3.5 h-3.5" />
+                                Resend email
+                              </>
+                            )}
+                          </button>
+
+                          {thisResend.message && (
+                            <p className="mt-1 text-[11px] text-emerald-300">
+                              {thisResend.message}
+                            </p>
+                          )}
+                          {thisResend.error && (
+                            <p className="mt-1 text-[11px] text-red-300">
+                              {thisResend.error}
+                            </p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Refund area */}
