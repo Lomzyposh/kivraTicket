@@ -1,0 +1,903 @@
+[
+  {
+    "title": "Ariana Grande: Live in Oakland",
+    "description": "Experience Ariana Grande live at Oakland Arena with a full-scale pop production, special guests, and a setlist packed with hits. Doors open 6:00 PM, show starts 7:30 PM.",
+    "category": "concert",
+
+    "venue": "Oakland Arena",
+    "location": {
+      "city": "Oakland",
+      "state": "CA",
+      "country": "USA",
+      "address": "Oakland Arena, Oakland, CA"
+    },
+
+    "date": "2026-06-06",
+    "time": "7:30 PM",
+
+    "price": {
+      "min": 95,
+      "max": 320,
+      "currency": "USD"
+    },
+
+    "seatingLayout": {
+      "hasSeats": true,
+      "rows": 30,
+      "columns": 50
+    },
+
+    "totalTickets": 15000,
+    "availableTickets": 1200,
+
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/concerts/29081-ariana-grande/ariana-grande-tickets-8.jpg",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHE8RODQ2oTmQpUOllRbn3HQ_qJAr7Zz5lwFX-LrNKPtLWdXD0wlhA57QomWc7aqtGdvn35PVJD9r9IpimU1jxdRxxCFn2EoW0M3lF9R8e3w&s=10"
+    ],
+
+    "apiSource": "manual"
+  },
+  {
+    "title": "Billie Eilish:Live in Austin",
+    "description": "Billie Eilish performs live at Moody Center ATX in Austin. Expect a mix of her biggest hits and new tracks in a fully immersive stage show.",
+    "category": "concert",
+    "venue": "Moody Center ATX",
+    "location": {
+      "city": "Austin",
+      "state": "TX",
+      "country": "USA",
+      "address": "2001 Robert Dedman Dr, Austin, TX"
+    },
+    "date": "2025-11-13",
+    "time": "7:00 PM",
+    "price": { "min": 85, "max": 320, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 25, "columns": 40 },
+    "totalTickets": 18000,
+    "availableTickets": 1600,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/f_auto/hero/event/concerts/61742-billie-eilish/billie-eilish-tickets-9.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Paul McCartney: Live in Pittsburgh",
+    "description": "Music legend Paul McCartney brings timeless classics to the PPG Paints Arena stage in a once-in-a-lifetime concert experience.",
+    "category": "concert",
+    "venue": "PPG Paints Arena",
+    "location": {
+      "city": "Pittsburgh",
+      "state": "PA",
+      "country": "USA",
+      "address": "1001 Fifth Ave, Pittsburgh, PA"
+    },
+    "date": "2025-11-11",
+    "time": "8:00 PM",
+    "price": { "min": 95, "max": 400, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 30, "columns": 50 },
+    "totalTickets": 17000,
+    "availableTickets": 1200,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/concerts/2031-paul-mccartney/paul-mccartney-tickets-9.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Ohio State Buckeyes vs Michigan Wolverines Football",
+    "description": "Catch the biggest college football rivalry live at Michigan Stadium. High energy, roaring fans, and unforgettable plays.",
+    "category": "sports",
+    "venue": "Michigan Stadium",
+    "location": {
+      "city": "Ann Arbor",
+      "state": "MI",
+      "country": "USA",
+      "address": "1201 S Main St, Ann Arbor, MI"
+    },
+    "date": "2025-11-29",
+    "time": "12:00 PM",
+    "price": { "min": 120, "max": 350, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 80 },
+    "totalTickets": 90000,
+    "availableTickets": 5000,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/sports/630-ncaaf-ohio-state-buckeyes/ohio-state-buckeyes-tickets-2.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Luke Combs: Las Vegas Stadium Show",
+    "description": "Country superstar Luke Combs takes over Allegiant Stadium with heart-pounding live energy and special guest artists.",
+    "category": "concert",
+    "venue": "Allegiant Stadium",
+    "location": {
+      "city": "Las Vegas",
+      "state": "NV",
+      "country": "USA",
+      "address": "3333 Al Davis Way, Las Vegas, NV"
+    },
+    "date": "2026-03-21",
+    "time": "5:50 PM",
+    "price": { "min": 75, "max": 250, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 70 },
+    "totalTickets": 45000,
+    "availableTickets": 7000,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/concerts/46776-luke-combs/luke-combs-tickets-6.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Luke Combs: Ames MidAmerican Energy Field Show",
+    "description": "Luke Combs continues his 2026 tour in Ames, Iowa, for a powerful outdoor performance at Jack Trice Stadium.",
+    "category": "concert",
+    "venue": "MidAmerican Energy Field at Jack Trice Stadium",
+    "location": {
+      "city": "Ames",
+      "state": "IA",
+      "country": "USA",
+      "address": "1800 S 4th St, Ames, IA"
+    },
+    "date": "2026-04-11",
+    "time": "5:20 PM",
+    "price": { "min": 70, "max": 220, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 35, "columns": 60 },
+    "totalTickets": 60000,
+    "availableTickets": 5500,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/concerts/46776-luke-combs/luke-combs-tickets-6.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Ohio State vs Notre Dame Men's Basketball",
+    "description": "Big Ten vs ACC showdown as the Buckeyes face the Fighting Irish at Purcell Pavilion. Expect fast plays and intense rivalry energy.",
+    "category": "sports",
+    "venue": "Purcell Pavilion at the Joyce Center",
+    "location": {
+      "city": "Notre Dame",
+      "state": "IN",
+      "country": "USA",
+      "address": "1 Moose Krause Cir, Notre Dame, IN"
+    },
+    "date": "2026-12-12",
+    "time": "TBD",
+    "price": { "min": 60, "max": 120, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 20, "columns": 30 },
+    "totalTickets": 10000,
+    "availableTickets": 1500,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/sports/630-ncaaf-ohio-state-buckeyes/ohio-state-buckeyes-tickets-2.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Rodeo Grand Island 2027",
+    "description": "Enjoy the wild and thrilling Rodeo Grand Island at Heartland Events Center with the best riders and bulls from across the state.",
+    "category": "sports",
+    "venue": "Heartland Events Center",
+    "location": {
+      "city": "Grand Island",
+      "state": "NE",
+      "country": "USA",
+      "address": "700 E Stolley Park Rd, Grand Island, NE"
+    },
+    "date": "2027-02-26",
+    "time": "TBD",
+    "price": { "min": 55, "max": 140, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 25, "columns": 40 },
+    "totalTickets": 9000,
+    "availableTickets": 800,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/category/36-rodeo/rodeo-tickets-1.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "NCAA Men’s Hockey: Springfield Regional 2027",
+    "description": "Catch the excitement of NCAA Men’s Hockey Regional Championships at MassMutual Center in Springfield, MA.",
+    "category": "sports",
+    "venue": "MassMutual Center",
+    "location": {
+      "city": "Springfield",
+      "state": "MA",
+      "country": "USA",
+      "address": "1277 Main St, Springfield, MA"
+    },
+    "date": "2027-03-25",
+    "time": "TBD",
+    "price": { "min": 80, "max": 180, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 20, "columns": 30 },
+    "totalTickets": 8000,
+    "availableTickets": 900,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/sports/2652-ncaab-ncaa-mens-basketball-tournament/ncaa-mens-basketball-tournament-tickets-2.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Los Angeles Auto Show 2025",
+    "description": "Explore the future of automobiles at the LA Auto Show with top car brands, concept vehicles, and interactive showcases.",
+    "category": "theater",
+    "venue": "Los Angeles Convention Center",
+    "location": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "country": "USA",
+      "address": "1201 S Figueroa St, Los Angeles, CA"
+    },
+    "date": "2025-11-21",
+    "time": "9:00 AM",
+    "price": { "min": 25, "max": 60, "currency": "USD" },
+    "seatingLayout": { "hasSeats": false },
+    "totalTickets": 20000,
+    "availableTickets": 3500,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/category/69-other-theater/other-theater-tickets-1.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Orlando Magic at New York Knicks",
+    "description": "The NBA showdown between Orlando Magic and New York Knicks live at Madison Square Garden, New York.",
+    "category": "sports",
+    "venue": "Madison Square Garden",
+    "location": {
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "address": "4 Pennsylvania Plaza, New York, NY"
+    },
+    "date": "2025-11-12",
+    "time": "7:00 PM",
+    "price": { "min": 85, "max": 220, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 60 },
+    "totalTickets": 18000,
+    "availableTickets": 2500,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_256,h_256/if_else/g_center,q_auto,c_fill,w_256,h_256/if_end/dpr_auto,f_auto/hero/event/sports/636-nba-orlando-magic/orlando-magic-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Kansas City Chiefs at Dallas Cowboys",
+    "description": "Thrilling NFL clash as the Kansas City Chiefs face off against the Dallas Cowboys at AT&T Stadium. Expect roaring crowds and world-class football.",
+    "category": "sports",
+    "venue": "AT&T Stadium",
+    "location": {
+      "city": "Arlington",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 AT&T Way, Arlington, TX"
+    },
+    "date": "2025-11-27",
+    "time": "15:30",
+    "price": { "min": 116, "max": 2400, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 60 },
+    "totalTickets": 1909,
+    "availableTickets": 2004,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/427-nfl-kansas-city-chiefs/kansas-city-chiefs-big-tickets-5.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Minnesota Vikings at Dallas Cowboys (Sunday Night Football)",
+    "description": "Sunday Night Football spectacle as the Dallas Cowboys host the Minnesota Vikings under the bright lights of AT&T Stadium.",
+    "category": "sports",
+    "venue": "AT&T Stadium",
+    "location": {
+      "city": "Arlington",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 AT&T Way, Arlington, TX"
+    },
+    "date": "2025-12-14",
+    "time": "19:20",
+    "price": { "min": 20, "max": 1044, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 60 },
+    "totalTickets": 3276,
+    "availableTickets": 1273,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/555-nfl-minnesota-vikings/minnesota-vikings-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Dallas Cowboys at New York Giants",
+    "description": "An intense NFC East battle as the Dallas Cowboys go head-to-head with the New York Giants at MetLife Stadium.",
+    "category": "sports",
+    "venue": "MetLife Stadium",
+    "location": {
+      "city": "East Rutherford",
+      "state": "NJ",
+      "country": "USA",
+      "address": "1 MetLife Stadium Dr, East Rutherford, NJ"
+    },
+    "date": "2026-03-02",
+    "time": "TBD",
+    "price": { "min": 49, "max": 628, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 70 },
+    "totalTickets": 2124,
+    "availableTickets": 768,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/214-nfl-dallas-cowboys/dallas-cowboys-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Philadelphia Eagles at Buffalo Bills",
+    "description": "The Buffalo Bills host the Philadelphia Eagles at Highmark Stadium in a powerhouse matchup filled with grit and gridiron glory.",
+    "category": "sports",
+    "venue": "Highmark Stadium",
+    "location": {
+      "city": "Orchard Park",
+      "state": "NY",
+      "country": "USA",
+      "address": "1 Bills Dr, Orchard Park, NY"
+    },
+    "date": "2025-12-28",
+    "time": "16:25",
+    "price": { "min": 267, "max": 2188, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 45, "columns": 65 },
+    "totalTickets": 1389,
+    "availableTickets": 1059,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/669-nfl-philadelphia-eagles/philapelphia-eagles-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "AFC Championship - TBD at Buffalo Bills (If Necessary)",
+    "description": "Potential AFC Championship clash at Highmark Stadium, with the Buffalo Bills poised for a home-field advantage showdown.",
+    "category": "sports",
+    "venue": "Highmark Stadium",
+    "location": {
+      "city": "Orchard Park",
+      "state": "NY",
+      "country": "USA",
+      "address": "1 Bills Dr, Orchard Park, NY"
+    },
+    "date": "2026-01-25",
+    "time": "15:00",
+    "price": { "min": 664, "max": 1130, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 45, "columns": 65 },
+    "totalTickets": 7,
+    "availableTickets": 27,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/g_center,f_auto/hero/category/1-nfl-football/nfl-football-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Lady Gaga - The Mayhem Ball Tour (Paris)",
+    "description": "Pop icon Lady Gaga lights up Paris with a mesmerizing performance at the Accor Arena during her Mayhem Ball Tour.",
+    "category": "concert",
+    "venue": "Accor Arena (Le Bercy)",
+    "location": {
+      "city": "Paris",
+      "state": "Île-de-France",
+      "country": "France",
+      "address": "8 Boulevard de Bercy, 75012 Paris, France"
+    },
+    "date": "2025-11-17",
+    "time": "20:00",
+    "price": { "min": 420, "max": 2618, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 30, "columns": 40 },
+    "totalTickets": 13,
+    "availableTickets": 25,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/concerts/18040-lady-gaga/lady-gaga-tickets-14.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Lady Gaga - The Mayhem Ball Tour (Los Angeles)",
+    "description": "Lady Gaga brings her explosive energy to the Kia Forum in Inglewood, delivering a night of theatrical pop brilliance.",
+    "category": "concert",
+    "venue": "Kia Forum",
+    "location": {
+      "city": "Inglewood",
+      "state": "CA",
+      "country": "USA",
+      "address": "3900 W Manchester Blvd, Inglewood, CA"
+    },
+    "date": "2026-02-18",
+    "time": "20:00",
+    "price": { "min": 96, "max": 1860, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 35, "columns": 50 },
+    "totalTickets": 950,
+    "availableTickets": 528,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/concerts/18040-lady-gaga/lady-gaga-tickets-14.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Sabrina Carpenter - Short n’ Sweet Tour",
+    "description": "Pop sensation Sabrina Carpenter performs live at Crypto.com Arena in Los Angeles, bringing her signature charm and hits to the stage.",
+    "category": "concert",
+    "venue": "Crypto.com Arena",
+    "location": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "country": "USA",
+      "address": "1111 S Figueroa St, Los Angeles, CA"
+    },
+    "date": "2025-11-23",
+    "time": "19:00",
+    "price": { "min": 108, "max": 1180, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 55 },
+    "totalTickets": 673,
+    "availableTickets": 1149,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/concerts/42658-sabrina-carpenter/sabrina-carpenter-tickets-7.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Matt Rife (18+ Event)",
+    "description": "The charismatic comedian Matt Rife brings his sharp humor and charm to the Giant Center stage in Hershey, promising an unforgettable comedy night for adults.",
+    "category": "theater-comedy",
+    "venue": "Giant Center",
+    "location": {
+      "city": "Hershey",
+      "state": "PA",
+      "country": "USA",
+      "address": "550 W Hersheypark Dr, Hershey, PA"
+    },
+    "date": "2025-11-28",
+    "time": "20:00",
+    "price": { "min": 51, "max": 852, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 25, "columns": 35 },
+    "totalTickets": 171,
+    "availableTickets": 1455,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/comedy/118103-matt-rife/matt-rife-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Matt Rife Live in Hamilton",
+    "description": "Matt Rife takes the stage at TD Coliseum in Hamilton, Ontario for a night of electrifying comedy and quick-witted stand-up performance.",
+    "category": "theater-comedy",
+    "venue": "TD Coliseum",
+    "location": {
+      "city": "Hamilton",
+      "state": "ON",
+      "country": "Canada",
+      "address": "101 York Blvd, Hamilton, ON L8R 3L4, Canada"
+    },
+    "date": "2025-12-30",
+    "time": "20:00",
+    "price": { "min": 54, "max": 524, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 25, "columns": 35 },
+    "totalTickets": 374,
+    "availableTickets": 422,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/comedy/118103-matt-rife/matt-rife-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 Coachella Music Festival - 3 Day Pass (2nd Weekend)",
+    "description": "The iconic Coachella Valley Music and Arts Festival returns to Empire Polo Field for three days of world-class music, art, and experiences under the California sun.",
+    "category": "music-festival",
+    "venue": "Empire Polo Field",
+    "location": {
+      "city": "Indio",
+      "state": "CA",
+      "country": "USA",
+      "address": "81800 51st Ave, Indio, CA"
+    },
+    "date": "2026-04-17",
+    "time": "10:59",
+    "price": { "min": 620, "max": 2316, "currency": "USD" },
+    "seatingLayout": { "hasSeats": false, "rows": 0, "columns": 0 },
+    "totalTickets": 3,
+    "availableTickets": 1,
+    "images": [
+      "https://media.vsstatic.com/image/upload/t_homepage_carousel_card_image_v3,f_auto,q_auto,dpr_1.5,w_312/hero/event/concerts/22202-justin-bieber/justin-bieber-tickets-8.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  
+  {
+    "title": "Memphis Grizzlies at New York Knicks",
+    "description": "The Knicks host the Memphis Grizzlies at the iconic Madison Square Garden in a high-energy NBA showdown filled with fast breaks and fierce rivalries.",
+    "category": "sports",
+    "venue": "Madison Square Garden",
+    "location": {
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "address": "4 Pennsylvania Plaza, New York, NY 10001"
+    },
+    "date": "2025-11-11",
+    "time": "19:30",
+    "price": { "min": 83, "max": 764, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 40, "columns": 60 },
+    "totalTickets": 219,
+    "availableTickets": 6,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/910-nba-memphis-grizzlies/memphis-grizzlies-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Orlando Magic at New York Knicks",
+    "description": "The Orlando Magic take on the Knicks under the bright lights of Madison Square Garden. Expect top-tier dunks and clutch plays from start to finish.",
+    "category": "sports",
+    "venue": "Madison Square Garden",
+    "location": {
+      "city": "New York",
+      "state": "NY",
+      "country": "USA",
+      "address": "4 Pennsylvania Plaza, New York, NY 10001"
+    },
+    "date": "2025-11-12",
+    "time": "19:00",
+    "price": { "min": 75, "max": 612, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 45, "columns": 55 },
+    "totalTickets": 380,
+    "availableTickets": 12,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/636-nba-orlando-magic/orlando-magic-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "New York Knicks at Brooklyn Nets",
+    "description": "Crosstown NBA rivalry reignites as the Knicks face the Nets at Barclays Center — a game of pride, precision, and pure New York energy.",
+    "category": "sports",
+    "venue": "Barclays Center",
+    "location": {
+      "city": "Brooklyn",
+      "state": "NY",
+      "country": "USA",
+      "address": "620 Atlantic Ave, Brooklyn, NY 11217"
+    },
+    "date": "2025-11-24",
+    "time": "19:30",
+    "price": { "min": 100, "max": 784, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 65 },
+    "totalTickets": 805,
+    "availableTickets": 20,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/602-nba-new-york-knicks/new-york-knicks-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Dallas Cowboys at Las Vegas Raiders",
+    "description": "It’s Monday Night Football at Allegiant Stadium as the Cowboys take on the Raiders in a prime-time battle of grit, glory, and gridiron greatness.",
+    "category": "sports",
+    "venue": "Allegiant Stadium",
+    "location": {
+      "city": "Las Vegas",
+      "state": "NV",
+      "country": "USA",
+      "address": "3333 Al Davis Way, Las Vegas, NV 89118"
+    },
+    "date": "2025-11-17",
+    "time": "17:15",
+    "price": { "min": 339, "max": 2756, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 55, "columns": 70 },
+    "totalTickets": 1022,
+    "availableTickets": 40,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/214-nfl-dallas-cowboys/dallas-cowboys-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Tampa Bay Buccaneers at Buffalo Bills",
+    "description": "A fierce NFL matchup in Orchard Park as the Bills defend home turf against the Buccaneers in an afternoon filled with passion and power.",
+    "category": "sports",
+    "venue": "Highmark Stadium",
+    "location": {
+      "city": "Orchard Park",
+      "state": "NY",
+      "country": "USA",
+      "address": "1 Bills Dr, Orchard Park, NY 14127"
+    },
+    "date": "2025-11-16",
+    "time": "13:00",
+    "price": { "min": 134, "max": 1152, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 60, "columns": 75 },
+    "totalTickets": 317,
+    "availableTickets": 18,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/839-nfl-tampa-bay-buccaneers/tampa-bay-buccaneers-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 Masters Golf Tournament - Monday Practice",
+    "description": "The legendary Augusta National opens its gates for Monday practice at the 2026 Masters, offering fans a rare glimpse of golf’s greatest in preparation.",
+    "category": "sports",
+    "venue": "Augusta National Golf Course",
+    "location": {
+      "city": "Augusta",
+      "state": "GA",
+      "country": "USA",
+      "address": "2604 Washington Rd, Augusta, GA 30904"
+    },
+    "date": "2026-04-06",
+    "time": "07:00",
+    "price": { "min": 1732, "max": 2162, "currency": "USD" },
+    "seatingLayout": { "hasSeats": false, "rows": 0, "columns": 0 },
+    "totalTickets": 21,
+    "availableTickets": 3,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/f_auto/hero/category/8-pga-golf/pga-golf-tickets-1.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 3 (Group B: Canada vs TBD)",
+    "description": "Witness football history in Toronto as Canada takes the stage in a Group B World Cup match at BMO Field — passion, pride, and power collide.",
+    "category": "sports",
+    "venue": "BMO Field",
+    "location": {
+      "city": "Toronto",
+      "state": "ON",
+      "country": "Canada",
+      "address": "170 Princes' Blvd, Toronto, ON M6K 3C3"
+    },
+    "date": "2026-06-12",
+    "time": "TBD",
+    "price": { "min": 870, "max": 12388, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 80 },
+    "totalTickets": 15,
+    "availableTickets": 5,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 8 (Group B)",
+    "description": "A massive Group B clash under the California sun as teams fight for World Cup glory at Levi’s Stadium in Santa Clara.",
+    "category": "sports",
+    "venue": "Levi's Stadium",
+    "location": {
+      "city": "Santa Clara",
+      "state": "CA",
+      "country": "USA",
+      "address": "4900 Marie P DeBartolo Way, Santa Clara, CA 95054"
+    },
+    "date": "2026-06-13",
+    "time": "TBD",
+    "price": { "min": 332, "max": 4668, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 60, "columns": 90 },
+    "totalTickets": 96,
+    "availableTickets": 8,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  
+  {
+    "title": "Atlanta Hawks at Oklahoma City Thunder",
+    "description": "An exciting NBA clash at Paycom Center as the Atlanta Hawks face off against the Oklahoma City Thunder in a game full of young talent and sharp shooting.",
+    "category": "sports",
+    "venue": "Paycom Center",
+    "location": {
+      "city": "Oklahoma City",
+      "state": "OK",
+      "country": "USA",
+      "address": "100 W Reno Ave, Oklahoma City, OK 73102"
+    },
+    "date": "2025-12-29",
+    "time": "19:00",
+    "price": { "min": 40, "max": 496, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 45, "columns": 60 },
+    "totalTickets": 578,
+    "availableTickets": 15,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/52-nba-atlanta-hawks/atlanta-hawks-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "New York Knicks at Atlanta Hawks",
+    "description": "State Farm Arena heats up as the Knicks battle the Hawks in a Saturday night showdown featuring elite guards and roaring fans.",
+    "category": "sports",
+    "venue": "State Farm Arena",
+    "location": {
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "USA",
+      "address": "1 State Farm Dr, Atlanta, GA 30303"
+    },
+    "date": "2025-12-27",
+    "time": "20:00",
+    "price": { "min": 50, "max": 840, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 70 },
+    "totalTickets": 1042,
+    "availableTickets": 30,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/602-nba-new-york-knicks/new-york-knicks-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Minnesota Timberwolves at Atlanta Hawks",
+    "description": "New Year’s Eve basketball bash as the Timberwolves visit Atlanta in a thrilling East vs West contest at State Farm Arena.",
+    "category": "sports",
+    "venue": "State Farm Arena",
+    "location": {
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "USA",
+      "address": "1 State Farm Dr, Atlanta, GA 30303"
+    },
+    "date": "2025-12-31",
+    "time": "15:00",
+    "price": { "min": 21, "max": 608, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 55, "columns": 70 },
+    "totalTickets": 1101,
+    "availableTickets": 45,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/553-nba-minnesota-timberwolves/minnesota-timberwolves-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Los Angeles Lakers at Philadelphia 76ers",
+    "description": "Two basketball powerhouses collide at Xfinity Mobile Arena as the Lakers take on the 76ers in an electrifying primetime matchup.",
+    "category": "sports",
+    "venue": "Xfinity Mobile Arena",
+    "location": {
+      "city": "Philadelphia",
+      "state": "PA",
+      "country": "USA",
+      "address": "3601 S Broad St, Philadelphia, PA 19148"
+    },
+    "date": "2025-12-07",
+    "time": "19:30",
+    "price": { "min": 106, "max": 1756, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 50, "columns": 65 },
+    "totalTickets": 836,
+    "availableTickets": 20,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/483-nba-los-angeles-lakers/los-angeles-lakers-big-tickets-3.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Houston Rockets at Los Angeles Lakers",
+    "description": "The Lakers host the Rockets in a Christmas Day spectacle at Crypto.com Arena. Expect big plays, holiday energy, and MVP-level performances.",
+    "category": "sports",
+    "venue": "Crypto.com Arena",
+    "location": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "country": "USA",
+      "address": "1111 S Figueroa St, Los Angeles, CA 90015"
+    },
+    "date": "2025-12-25",
+    "time": "17:00",
+    "price": { "min": 133, "max": 2440, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 60, "columns": 70 },
+    "totalTickets": 901,
+    "availableTickets": 25,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/360-nba-houston-rockets/houston-rockets-big-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "Arsenal FC vs Tottenham Hotspur FC",
+    "description": "The North London Derby returns to the Emirates as Arsenal and Spurs lock horns in a battle of pride, precision, and Premier League passion.",
+    "category": "sports",
+    "venue": "Emirates Stadium",
+    "location": {
+      "city": "London",
+      "state": "GB",
+      "country": "United Kingdom",
+      "address": "Hornsey Rd, London N7 7AJ, UK"
+    },
+    "date": "2025-11-23",
+    "time": "16:30",
+    "price": { "min": 651, "max": 6820, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 60, "columns": 80 },
+    "totalTickets": 135,
+    "availableTickets": 12,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/2321-arsenal-fc/arsenal-fc-tickets-1.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 10 (Group E)",
+    "description": "NRG Stadium in Houston welcomes the World Cup for an epic Group E match — where global stars battle on American soil.",
+    "category": "sports",
+    "venue": "NRG Stadium",
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "country": "USA",
+      "address": "NRG Pkwy, Houston, TX 77054"
+    },
+    "date": "2026-06-14",
+    "time": "TBD",
+    "price": { "min": 266, "max": 4432, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 75, "columns": 100 },
+    "totalTickets": 74,
+    "availableTickets": 5,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 11 (Group F)",
+    "description": "A monumental Group F clash at AT&T Stadium as the world’s best teams face off in front of a record-breaking Texas crowd.",
+    "category": "sports",
+    "venue": "AT&T Stadium",
+    "location": {
+      "city": "Arlington",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 AT&T Way, Arlington, TX 76011"
+    },
+    "date": "2026-06-14",
+    "time": "TBD",
+    "price": { "min": 307, "max": 5560, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 80, "columns": 120 },
+    "totalTickets": 98,
+    "availableTickets": 8,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 13 (Group H)",
+    "description": "Hard Rock Stadium hosts a massive Group H encounter under the Miami sun — world football at its finest.",
+    "category": "sports",
+    "venue": "Hard Rock Stadium",
+    "location": {
+      "city": "Miami Gardens",
+      "state": "FL",
+      "country": "USA",
+      "address": "347 Don Shula Dr, Miami Gardens, FL 33056"
+    },
+    "date": "2026-06-15",
+    "time": "TBD",
+    "price": { "min": 322, "max": 4728, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 75, "columns": 100 },
+    "totalTickets": 75,
+    "availableTickets": 7,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  },
+  {
+    "title": "2026 World Cup - Match 3 (Group B: Canada vs TBD)",
+    "description": "The energy is unmatched at BMO Field as Canada plays their home World Cup fixture — a landmark moment for North American football.",
+    "category": "sports",
+    "venue": "BMO Field",
+    "location": {
+      "city": "Toronto",
+      "state": "ON",
+      "country": "Canada",
+      "address": "170 Princes' Blvd, Toronto, ON M6K 3C3"
+    },
+    "date": "2026-06-12",
+    "time": "TBD",
+    "price": { "min": 870, "max": 12128, "currency": "USD" },
+    "seatingLayout": { "hasSeats": true, "rows": 65, "columns": 100 },
+    "totalTickets": 41,
+    "availableTickets": 4,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "apiSource": "manual"
+  }
+
+
+  
+]

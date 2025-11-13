@@ -72,6 +72,10 @@ const Navbar = () => {
           {/* Right side (desktop) */}
           <div className="hidden md:flex items-center gap-3">
             <div className="hidden md:flex items-center gap-6">
+              {/* /merch */}
+               <NavLink to="/merch" active={isActive("/merch")}>
+                Merch
+              </NavLink>
               <NavLink to="/events" active={isActive("/events")}>
                 Events
               </NavLink>
@@ -88,7 +92,7 @@ const Navbar = () => {
                 </IconButton>
 
                 <div className="relative">
-                  <IconButton to="/checkout" label="Cart">
+                  <IconButton to="/cart" label="Cart">
                     <ShoppingCart className="w-5 h-5" />
                     {cartCount > 0 && (
                       <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-semibold text-slate-950">
@@ -246,14 +250,14 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   />
                   <MobileLink
-                    to="/checkout"
+                    to="/cart"
                     label={`Cart${cartCount ? ` (${cartCount})` : ""}`}
                     icon={<ShoppingCart className="w-4 h-4" />}
                     onClick={() => setMobileMenuOpen(false)}
                   />
                   <MobileLink
                     to="/my-orders"
-                    label="My tickets"
+                    label="My Orders"
                     icon={<Ticket className="w-4 h-4" />}
                     onClick={() => setMobileMenuOpen(false)}
                   />

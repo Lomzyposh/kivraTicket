@@ -17,13 +17,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 
-// Auth-only user pages
 import Wishlist from "./pages/Wishlist";
 import Checkout from "./pages/Checkout";
 import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
 
-// Admin pages (assuming they're in src/pages/Admin/)
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminEvents from "./pages/Admin/AdminEvents";
@@ -33,13 +31,17 @@ import AdminFetchEvents from "./pages/Admin/AdminFetchEvents";
 
 import NotFound from "./pages/NotFound";
 
-// Contexts (your original snippet used ./utils)
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 
 import Loader from "./components/Loader";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import Merch from "./pages/Merch";
+import AdminMerch from "./pages/Admin/AdminMerch";
+import Cart from "./pages/Cart";
+import CartCheckout from "./pages/CartCheckout";
+import VerifyPayment from "./pages/VerifyPayment";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -72,120 +74,125 @@ const Layout = ({ children }) => {
   );
 };
 
-
 function App() {
   return (
-      <AuthProvider>
-        <CartProvider>
-          <Layout>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/events" element={<Events />} />
-              <Route path="/events/:id" element={<EventDetails />} />
+    <AuthProvider>
+      <CartProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/merch" element={<Merch />} />
+            <Route path="/events/:id" element={<EventDetails />} />
 
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/admin/merch/new" element={<AdminMerch />} />
+            <Route path="/cart" element={<Cart />} />
 
-              {/* User routes (auth required) */}
-              <Route
-                path="/wishlist"
-                element={
-                  <ProtectedRoute>
-                    <Wishlist />
-                  </ProtectedRoute>
-                }
-              />
+            <Route path="/checkout-cart" element={<CartCheckout />} />
 
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute>
-                    <Checkout />
-                  </ProtectedRoute>
-                }
-              />
+            <Route path="/verify/:orderId" element={<VerifyPayment />} />
 
-              <Route
-                path="/my-orders"
-                element={
-                  <ProtectedRoute>
-                    <MyOrders />
-                  </ProtectedRoute>
-                }
-              />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/wishlist"
+              element={
+                <ProtectedRoute>
+                  <Wishlist />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* Admin routes (adminOnly) */}
-              <Route
-                path="/admin"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
 
-              <Route
-                path="/admin/orders"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminOrders />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              }
+            />
 
-              <Route
-                path="/admin/events"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminEvents />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-              <Route
-                path="/admin/payment-config"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminPaymentConfig />
-                  </ProtectedRoute>
-                }
-              />
+            {/* Admin routes (adminOnly) */}
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
 
-              <Route
-                path="/admin/notifications"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminNotifications />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/admin/orders"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminOrders />
+                </ProtectedRoute>
+              }
+            />
 
-              <Route
-                path="/admin/fetch-events"
-                element={
-                  <ProtectedRoute adminOnly>
-                    <AdminFetchEvents />
-                  </ProtectedRoute>
-                }
-              />
+            <Route
+              path="/admin/events"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminEvents />
+                </ProtectedRoute>
+              }
+            />
 
-              {/* 404 fallback */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </CartProvider>
-      </AuthProvider>
+            <Route
+              path="/admin/payment-config"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminPaymentConfig />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/notifications"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminNotifications />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/fetch-events"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminFetchEvents />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 404 fallback */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,0 +1,109 @@
+[
+  {
+    "title": "Alpha Rebel Hoodie",
+    "description": "Mid-weight fleece hoodie with metallic antler logo and front pouch pocket.",
+    "brand": "Rebel Gear",
+    "category": "hoodie",
+    "tags": ["unisex", "streetwear", "black"],
+    "images": ["https://res.cloudinary.com/dt6udjm4i/image/upload/v1762962988/cloth5_khbiqj.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black",
+        "price": 60,
+        "stock": 24,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black", "price": 60, "stock": 28 },
+      { "size": "XL", "color": "Black", "price": 60, "stock": 20 },
+      { "size": "XXL", "color": "Black", "price": 62, "stock": 12 }
+    ],
+    "isActive": true
+  },
+  {
+    "title": "Working Like Crazy Hoodie",
+    "description": "Statement back print: “Working like crazy to support the lazy.” Soft fleece.",
+    "brand": "Rebel Gear",
+    "category": "hoodie",
+    "tags": ["graphic", "unisex", "black"],
+    "images": ["https://res.cloudinary.com/dt6udjm4i/image/upload/v1762962987/cloth1_eld6yp.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black/White Print",
+        "price": 55,
+        "stock": 22,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black/White Print", "price": 55, "stock": 26 },
+      { "size": "XL", "color": "Black/White Print", "price": 55, "stock": 18 },
+      { "size": "XXL", "color": "Black/White Print", "price": 57, "stock": 10 }
+    ],
+    "isActive": true
+  },
+  {
+    "title": "Act Vile Hoodie",
+    "description": "Distressed red lettering and claw marks on heavyweight hoodie.",
+    "brand": "Rebel Gear",
+    "category": "hoodie",
+    "tags": ["graphic", "streetwear"],
+    "images": ["https://res.cloudinary.com/dt6udjm4i/image/upload/v1762962988/cloth2_uayfu5.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black/Red Print",
+        "price": 58,
+        "stock": 20,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black/Red Print", "price": 58, "stock": 24 },
+      { "size": "XL", "color": "Black/Red Print", "price": 58, "stock": 16 }
+    ],
+    "isActive": true
+  },
+  {
+    "title": "Outlaw Bloodline Tee",
+    "description": "Soft cotton tee with small chest mark and large back bull-skull print.",
+    "brand": "Rebel Gear",
+    "category": "t-shirt",
+    "tags": ["unisex", "graphic", "black"],
+    "images": ["https://res.cloudinary.com/dt6udjm4i/image/upload/v1762962988/cloth3_bmjn13.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black/Red Print",
+        "price": 32,
+        "stock": 30,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black/Red Print", "price": 32, "stock": 28 },
+      { "size": "XL", "color": "Black/Red Print", "price": 32, "stock": 20 }
+    ],
+    "isActive": true
+  },
+  {
+    "title": "Rebel Family Logo Tee",
+    "description": "Classic crewneck with left-chest Rebel Family logo.",
+    "brand": "Rebel Gear",
+    "category": "t-shirt",
+    "tags": ["unisex", "minimal"],
+    "images": ["https://res.cloudinary.com/dt6udjm4i/image/upload/v1762962988/cloth4_ktjcmb.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black/White Logo",
+        "price": 28,
+        "stock": 26,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black/White Logo", "price": 28, "stock": 24 },
+      { "size": "XL", "color": "Black/White Logo", "price": 28, "stock": 18 }
+    ],
+    "isActive": true
+  }
+]

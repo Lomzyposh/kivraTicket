@@ -12,6 +12,7 @@ import {
   ArrowRight,
   Settings,
   Banknote,
+  Shirt,
 } from "lucide-react";
 import api from "../../api/axios";
 import { useAuth } from "../../context/AuthContext";
@@ -45,6 +46,11 @@ const adminLinks = [
     label: "Events",
     icon: Activity,
     path: "/admin/events",
+  },
+  {
+    label: "Add Cloth",
+    icon: Shirt,
+    path: "/admin/merch/new",
   },
   {
     label: "Fetch events",

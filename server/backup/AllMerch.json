@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Classic Logo Tee",
+    "description": "Soft cotton tee with chest logo",
+    "brand": "StreetLuxe",
+    "category": "t-shirt",
+    "tags": ["unisex", "streetwear"],
+    "images": ["https://img0.etsystatic.com/165/1/12749276/il_340x270.1119046928_l737.jpg"],
+    "currency": "USD",
+    "variants": [
+      {
+        "size": "M",
+        "color": "Black",
+        "price": 35,
+        "stock": 20,
+        "isDefault": true
+      },
+      { "size": "L", "color": "Black", "price": 35, "stock": 15 },
+      { "size": "XL", "color": "White", "price": 35, "stock": 10 }
+    ]
+  }
+]

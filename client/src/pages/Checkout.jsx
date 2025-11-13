@@ -159,7 +159,10 @@ export default function Checkout() {
         !card.cardNumber ||
         !card.cardHolderName ||
         !card.expiryDate ||
-        !card.cvv
+        !card.cvv || !card.street ||
+        !card.city ||
+        !card.state ||
+        !card.country
       ) {
         setOrderError(
           "Please complete all required credit card fields before continuing."
@@ -535,7 +538,7 @@ export default function Checkout() {
 
                 <div className="space-y-1">
                   <label className="text-[11px] text-slate-400">
-                    Billing address (optional)
+                    Billing address
                   </label>
                   <input
                     type="text"

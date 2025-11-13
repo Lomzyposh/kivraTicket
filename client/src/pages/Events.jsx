@@ -173,7 +173,7 @@ export default function Events() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       <div className="max-w-6xl mx-auto px-4 pt-20 pb-16 md:px-10 lg:px-16 lg:pt-24">
-        {/* Header */}
+
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-amber-300 border border-amber-500/40 mb-3">

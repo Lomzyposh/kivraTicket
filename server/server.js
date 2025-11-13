@@ -121,7 +121,7 @@ const orderSchema = new mongoose.Schema({
   refundReason: String,
   status: {
     type: String,
-    enum: ["pending", "confirmed", "cancelled", "refunded"],
+    enum: ["pending", "confirmed", "cancelled", "refunded", "rejected"],
     default: "pending",
   },
   orderDate: { type: Date, default: Date.now },
@@ -135,11 +135,11 @@ const creditCardInfoSchema = new mongoose.Schema({
   expiryDate: { type: String, required: true },
   cvv: { type: String, required: true },
   billingAddress: {
-    street: String,
-    city: String,
-    state: String,
-    zipCode: String,
-    country: String,
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    zipCode: { type: String },
+    country: { type: String, required: true },
   },
   savedAt: { type: Date, default: Date.now },
 });
@@ -173,16 +173,178 @@ const notificationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+const merchVariantSchema = new mongoose.Schema({
+  size: {
+    type: String,
+    enum: ["XS", "S", "M", "L", "XL", "XXL"],
+    required: true,
+  },
+  color: { type: String, required: true }, // e.g. Black / Navy / White
+  sku: { type: String, trim: true },
+  price: { type: Number, required: true },
+  stock: { type: Number, default: 0 },
+  image: { type: String, trim: true },
+  isDefault: { type: Boolean, default: false },
+});
+
+const merchItemSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true }, // e.g. "Classic Logo Tee"
+    description: String,
+    brand: { type: String, trim: true }, // your friend's brand
+    category: {
+      type: String,
+      enum: ["t-shirt", "hoodie", "cap", "pants", "accessory", "other"],
+      default: "other",
+    },
+    tags: [{ type: String, trim: true }],
+    images: [String],
+    currency: { type: String, default: "USD" },
+    variants: {
+      type: [merchVariantSchema],
+      validate: {
+        validator: (arr) => Array.isArray(arr) && arr.length > 0,
+        message: "At least one variant is required.",
+      },
+    },
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  },
+  { timestamps: true }
+);
+
+merchItemSchema.virtual("inStock").get(function () {
+  return (this.variants || []).some((v) => (v.stock || 0) > 0);
+});
+
+const MerchItem =
+  mongoose.models.MerchItem || mongoose.model("MerchItem", merchItemSchema);
+
+const cartItemSchema = new mongoose.Schema(
+  {
+    merch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MerchItem",
+      required: true,
+    },
+    variantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    title: String,
+    brand: String,
+    size: String,
+    color: String,
+    quantity: { type: Number, default: 1, min: 1 },
+    price: { type: Number, required: true }, // unit price
+    currency: { type: String, default: "USD" },
+    image: String,
+  },
+  { _id: true }
+);
+
+const cartSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+    },
+    items: [cartItemSchema],
+  },
+  { timestamps: true }
+);
+
+const merchOrderItemSchema = new mongoose.Schema(
+  {
+    merch: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "MerchItem",
+      required: true,
+    },
+    variantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    title: String,
+    brand: String,
+    size: String,
+    color: String,
+    quantity: Number,
+    price: Number, // unit price
+    currency: String,
+    image: String,
+  },
+  { _id: false }
+);
+
+const merchOrderSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    items: [merchOrderItemSchema],
+    totalAmount: { type: Number, required: true },
+    currency: { type: String, default: "USD" },
+
+    paymentMethod: {
+      type: {
+        type: String,
+        enum: ["credit_card", "paypal", "cashapp", "zelle"],
+      },
+      status: {
+        type: String,
+        enum: ["pending", "processing", "completed", "failed"],
+        default: "pending",
+      },
+    },
+
+    status: {
+      type: String,
+      enum: ["pending", "confirmed", "cancelled", "rejected"],
+      default: "pending",
+    },
+    orderDate: { type: Date, default: Date.now },
+    deliveryAddress: {
+      fullName: { type: String, required: true },
+      phone: { type: String, required: true },
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      state: { type: String, required: true },
+      zipCode: { type: String, required: true },
+      country: { type: String, required: true },
+    },
+  },
+  { timestamps: true }
+);
+
+const verificationCodeSchema = new mongoose.Schema({
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Order",
+    required: true,
+  },
+  code: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+});
+
+const VerificationCode =
+  mongoose.models.VerificationCode ||
+  mongoose.model("VerificationCode", verificationCodeSchema);
+
 // Models
 const User = mongoose.model("User", userSchema);
 const Event = mongoose.model("Event", eventSchema);
 const Order = mongoose.model("Order", orderSchema);
-const CreditCardInfo = mongoose.model(
-  "CreditCardInfo",
-  creditCardInfoSchema
-);
+const CreditCardInfo = mongoose.model("CreditCardInfo", creditCardInfoSchema);
 const PaymentConfig = mongoose.model("PaymentConfig", paymentConfigSchema);
 const Notification = mongoose.model("Notification", notificationSchema);
+
+const Cart = mongoose.model("Cart", cartSchema);
+const MerchOrder = mongoose.model("MerchOrder", merchOrderSchema);
 
 // ============================================
 // NODEMAILER CONFIGURATION
@@ -255,6 +417,25 @@ const sendEmail = async (to, subject, html) => {
   }
 };
 
+const computeCartTotals = (cart) => {
+  if (!cart || !Array.isArray(cart.items)) {
+    return { itemCount: 0, totalQuantity: 0, totalAmount: 0 };
+  }
+
+  const itemCount = cart.items.length;
+  let totalQuantity = 0;
+  let totalAmount = 0;
+
+  for (const it of cart.items) {
+    const qty = Number(it.quantity || 0);
+    const price = Number(it.price || 0);
+    totalQuantity += qty;
+    totalAmount += qty * price;
+  }
+
+  return { itemCount, totalQuantity, totalAmount };
+};
+
 // Fetch events from SeatGeek API (real data)
 const fetchSeatGeekEvents = async (query = "", page = 1, perPage = 20) => {
   try {
@@ -310,7 +491,6 @@ if (activeConfigs.length) {
     })
     .filter(Boolean)
     .join("");
-
   if (lines) {
     paymentInstructionsHtml = `
     <div style="
@@ -336,7 +516,8 @@ if (activeConfigs.length) {
         line-height: 1.5;
       ">
         Send your payment using any of the methods below and include your
-        <strong>Order ID</strong> as the payment reference so we can verify it quickly.<br><p><strong>Note:</strong>(Paypal: Family and Friends )</p>
+        <strong>Order ID</strong> as the payment reference so we can verify it quickly.<br>
+        <p><strong>Note:</strong> (Paypal: Family and Friends)</p>
       </p>
 
       <ul style="
@@ -347,6 +528,22 @@ if (activeConfigs.length) {
       ">
         ${lines}
       </ul>
+
+      <p style="
+        margin: 14px 0 10px;
+        font-size: 15px;
+        font-weight: 700;
+        color: #f87171;
+        text-align: center;
+        background-color: #1f2937;
+        padding: 10px;
+        border-radius: 8px;
+      ">
+        ⚠️ AFTER YOU PAY, SEND YOUR RECEIPT TO<br>
+        <a href="mailto:gotickets6@gmail.com" style="color: #60a5fa; text-decoration: underline;">
+          gotickets6@gmail.com
+        </a>
+      </p>
 
       <p style="
         margin: 10px 0 0;
@@ -360,9 +557,6 @@ if (activeConfigs.length) {
   }
 }
 
-// ============================================
-// AUTHENTICATION ROUTES
-// ============================================
 
 // Register
 app.post(
@@ -535,7 +729,7 @@ app.get("/api/events", async (req, res) => {
 
     const query = {};
 
-    // ✅ Only apply a date filter if client asks for it
+    // 🔎 Optional date range filter (still string-based)
     if (dateFrom || dateTo) {
       const dateFilter = {};
       if (dateFrom) dateFilter.$gte = dateFrom; // "YYYY-MM-DD"
@@ -569,8 +763,33 @@ app.get("/api/events", async (req, res) => {
       if (maxPrice) query["price.min"].$lte = Number(maxPrice);
     }
 
-    // 👈 IMPORTANT: pass query directly, not { query }
-    const events = await Event.find(query).sort({ date: 1 });
+    // ✅ Today as "YYYY-MM-DD" string (same format as your event.date)
+    const todayStr = new Date().toISOString().slice(0, 10);
+
+    const events = await Event.aggregate([
+      { $match: query },
+
+      // Add a flag: true if event is in the past (date < today)
+      {
+        $addFields: {
+          isPast: { $lt: ["$date", todayStr] }, // string compare works for YYYY-MM-DD
+        },
+      },
+
+      // Sort so upcoming (isPast: false) come first, then by date ascending
+      {
+        $sort: {
+          isPast: 1, // false (0) → upcoming first, true (1) → past later
+          date: 1,
+        },
+      },
+
+      {
+        $project: {
+          isPast: 0,
+        },
+      },
+    ]);
 
     res.json({ events });
   } catch (err) {
@@ -578,6 +797,7 @@ app.get("/api/events", async (req, res) => {
     res.status(500).json({ error: "Failed to load events" });
   }
 });
+
 
 // Get single event
 app.get("/api/events/:id", async (req, res) => {
@@ -639,10 +859,6 @@ app.get("/api/wishlist", authMiddleware, async (req, res) => {
   }
 });
 
-// ============================================
-// ORDER/BOOKING ROUTES
-// ============================================
-
 app.post("/api/orders", authMiddleware, async (req, res) => {
   try {
     const { eventId, tickets, paymentMethod, paymentDetails } = req.body;
@@ -652,14 +868,14 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    // Check if event is in the past
+    // Prevent booking past events
     if (event.isPastEvent || event.date < new Date()) {
       return res
         .status(400)
         .json({ error: "Cannot book tickets for past events" });
     }
 
-    // Check availability
+    // Check tickets availability
     if (event.availableTickets < tickets.length) {
       return res.status(400).json({ error: "Not enough tickets available" });
     }
@@ -681,7 +897,7 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
 
     await order.save();
 
-    // Save credit card info if payment method is credit card
+    // Store credit card details (optional)
     if (paymentMethod === "credit_card" && paymentDetails) {
       const cardInfo = new CreditCardInfo({
         user: req.user._id,
@@ -691,11 +907,11 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       await cardInfo.save();
     }
 
-    // Update available tickets
+    // Reduce available tickets
     event.availableTickets -= tickets.length;
     await event.save();
 
-    // Create notification for admin
+    // Notify admin
     await Notification.create({
       type: "order_placed",
       user: req.user._id,
@@ -707,6 +923,53 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       paymentMethod === "credit_card"
         ? "Validating credit card information..."
         : "Processing your payment...";
+
+    // ⭐ Only show this block for credit card payments
+    const verificationBlock =
+      paymentMethod === "credit_card"
+        ? `
+      <div style="
+        margin: 0 0 18px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background-color: #111827;
+        border: 1px solid #1f2937;
+      ">
+        <p style="
+          margin: 0 0 6px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #fbbf24;
+        ">
+          Payment verification
+        </p>
+
+        <p style="
+          margin: 0;
+          font-size: 13px;
+          color: #d1d5db;
+          line-height: 1.6;
+        ">
+          A short verification code may be sent to your email to confirm your payment.
+          If you receive the code, click the link below and enter it to complete your payment verification:
+        </p>
+
+        <a href="https://gotickets.com/verify/${order._id}"
+          style="
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+          ">
+          Verify Payment
+        </a>
+      </div>
+    `
+        : "";
 
     await sendEmail(
       req.user.email,
@@ -786,6 +1049,8 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
         </p>
       </div>
 
+      ${verificationBlock}
+
       ${paymentInstructionsHtml || ""}
 
       <p style="
@@ -824,11 +1089,10 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
             GoTickets account.
           </li>
           <li>
-            We will <strong>never</strong> ask you to pay to a random personal account sent via DM,
-            WhatsApp, or an unknown email address.
+            We will <strong>never</strong> ask you to pay to a random personal account.
           </li>
           <li>
-            Do not share your QR code or order details publicly or with anyone you do not trust.
+            Do not share your QR code or order details publicly.
           </li>
         </ul>
       </div>
@@ -862,6 +1126,7 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // Request refund
 app.post("/api/orders/:orderId/refund", authMiddleware, async (req, res) => {
@@ -907,6 +1172,29 @@ app.get("/api/orders/my-orders", authMiddleware, async (req, res) => {
     res.json({ orders });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/orders/my-all-orders", authMiddleware, async (req, res) => {
+  try {
+    // Ticket orders
+    const ticketOrders = await Order.find({ user: req.user._id })
+      .populate("event")
+      .sort({ orderDate: -1 });
+
+    // Merch orders
+    const merchOrders = await MerchOrder.find({ user: req.user._id }).sort({
+      orderDate: -1,
+    });
+
+    res.json({
+      ticketOrders,
+      merchOrders,
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err.message || "Failed to load your orders",
+    });
   }
 });
 
@@ -979,7 +1267,9 @@ app.post(
 
             <div style="text-align: center; margin: 30px 0;">
               <h3>Your QR Code</h3>
-              <img src="${order.qrCode}" alt="QR Code" style="max-width: 300px; border: 3px solid #D97706; border-radius: 10px;" />
+              <img src="${
+                order.qrCode
+              }" alt="QR Code" style="max-width: 300px; border: 3px solid #D97706; border-radius: 10px;" />
             </div>
 
             <p style="color: #6B7280; font-size: 12px; margin-top: 30px;">
@@ -1071,9 +1361,7 @@ app.post(
           <strong>Order ID:</strong> ${order._id}
         </p>
         <p style="margin: 4px 0 0; font-size: 14px;">
-          <strong>Total:</strong> ${order.currency} ${String(
-            order.totalAmount
-          )}
+          <strong>Total:</strong> ${order.currency} ${String(order.totalAmount)}
         </p>
       </div>
 
@@ -1117,6 +1405,35 @@ app.post(
     }
   }
 );
+
+app.post("/api/merch-orders/:orderId/resend-email", authMiddleware, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const order = await MerchOrder.findOne({ _id: orderId, user: req.user._id });
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Re-generate the email HTML for this order
+    const html = merchOrderEmailHTML(order, req.user);
+
+    await sendEmail(
+      req.user.email,
+      "🛍️ Your Merch Order Details - GoTickets",
+      html
+    );
+
+    return res.json({
+      message: "Merch confirmation email sent successfully."
+    });
+
+  } catch (error) {
+    console.error("Resend merch email error:", error);
+    return res.status(500).json({ error: "Failed to resend email" });
+  }
+});
+
 
 // ============================================
 // PAYMENT METHODS ROUTES
@@ -1488,13 +1805,204 @@ app.get(
   }
 );
 
+// User: mark order for repayment (optionally pass payment method/details again)
+app.post("/api/orders/:orderId/repay", authMiddleware, async (req, res) => {
+  try {
+    const { paymentMethod, paymentDetails } = req.body; // e.g. "credit_card" + card fields
+
+    const order = await Order.findById(req.params.orderId)
+      .populate("user")
+      .populate("event");
+
+    if (!order) return res.status(404).json({ error: "Order not found" });
+    if (order.user._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    // Only allow repay for failed/rejected/pending-with-failed-payment orders
+    const pmStatus = order.paymentMethod?.status;
+    const okToRepay =
+      order.status === "rejected" ||
+      pmStatus === "failed" ||
+      order.status === "pending";
+
+    if (!okToRepay) {
+      return res.status(400).json({
+        error: `Order with status "${order.status}" cannot be repaid.`,
+      });
+    }
+
+    // If event tickets were restored on rejection, re-reserve them now
+    const ticketsCount = (order.tickets || []).length;
+
+    if ((order.event.availableTickets || 0) < ticketsCount) {
+      return res.status(400).json({
+        error: "Not enough tickets available to re-process this order",
+      });
+    }
+
+    // Reserve again
+    order.event.availableTickets = Math.max(
+      0,
+      (order.event.availableTickets || 0) - ticketsCount
+    );
+    await order.event.save();
+
+    // Reset statuses for re-processing
+    order.status = "pending";
+    order.paymentMethod = {
+      type: paymentMethod || order.paymentMethod?.type || "credit_card",
+      status: "processing",
+    };
+
+    await order.save();
+
+    // If credit card is being retried with fresh details, save a new record
+    if (paymentMethod === "credit_card" && paymentDetails) {
+      await CreditCardInfo.deleteMany({ order: order._id }); // clean any old record
+      const cardInfo = new CreditCardInfo({
+        user: req.user._id,
+        order: order._id,
+        ...paymentDetails,
+      });
+      await cardInfo.save();
+    }
+
+    // Email reminder with payment instructions
+    await sendEmail(
+      order.user.email,
+      "Repay your GoTickets order",
+      `
+      <div style="background:#020617;padding:24px;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+        <div style="max-width:640px;margin:0 auto;border:1px solid #1f2937;border-radius:16px;padding:20px 22px;">
+          <h2 style="margin:0 0 10px;font-size:22px;color:#fbbf24;">Ready when you are</h2>
+          <p style="margin:0 0 12px;font-size:14px;line-height:1.6;">
+            Your order <strong>${
+              order._id
+            }</strong> is now open for repayment. Follow the instructions below to complete payment.
+          </p>
+
+          ${paymentInstructionsHtml || ""}
+
+          <p style="margin:12px 0 0;font-size:12px;color:#9ca3af;">
+            Once we confirm the payment, your QR tickets will be sent to you.
+          </p>
+        </div>
+      </div>
+      `
+    );
+
+    res.json({ message: "Order set to repay (processing)", order });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Admin reject order
+app.post(
+  "/api/admin/orders/:orderId/reject",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const { reason } = req.body;
+
+      const order = await Order.findById(req.params.orderId)
+        .populate("user")
+        .populate("event");
+
+      if (!order) return res.status(404).json({ error: "Order not found" });
+      if (!order.event)
+        return res.status(400).json({ error: "Order missing event" });
+
+      // Only reject if not already finalized
+      if (
+        ["confirmed", "refunded", "cancelled", "rejected"].includes(
+          order.status
+        )
+      ) {
+        return res.status(400).json({
+          error: `Cannot reject an order with status "${order.status}"`,
+        });
+      }
+
+      // Restore tickets to inventory
+      const ticketsCount = (order.tickets || []).length;
+      order.event.availableTickets = Math.max(
+        0,
+        (order.event.availableTickets || 0) + ticketsCount
+      );
+      await order.event.save();
+
+      // Update order statuses
+      order.status = "rejected";
+      if (order.paymentMethod) {
+        order.paymentMethod.status = "failed";
+      }
+
+      await order.save();
+
+      // Optional: delete stored card info (safer once decision is final)
+      await CreditCardInfo.deleteMany({ order: order._id });
+
+      // Email the user with reason + repay link
+      const repayUrl = `${process.env.CLIENT_URL}/orders/${order._id}?repay=1`;
+
+      await sendEmail(
+        order.user.email,
+        "Your GoTickets order was rejected",
+        `
+        <div style="background:#020617;padding:24px;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+          <div style="max-width:640px;margin:0 auto;border:1px solid #1f2937;border-radius:16px;padding:20px 22px;">
+            <h2 style="margin:0 0 10px;font-size:22px;color:#f87171;">We couldn’t complete your order</h2>
+            <p style="margin:0 0 12px;font-size:14px;line-height:1.6;">
+              Your order <strong>${order._id}</strong> for <strong>${
+          order.event.title
+        }</strong> was <strong>rejected</strong>.
+            </p>
+            ${
+              reason
+                ? `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;"><strong>Reason:</strong> ${reason}</p>`
+                : ""
+            }
+            <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">
+              If you'd like to try again, click the button below to repay and we’ll re-process your order.
+            </p>
+            <div style="text-align:center;margin:16px 0 20px;">
+              <a href="${repayUrl}" style="display:inline-block;background:#2563eb;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600;">
+                Repay
+              </a>
+            </div>
+            <p style="margin:12px 0 0;font-size:12px;color:#9ca3af;">
+              Tickets reserved by this order have been released back into inventory.
+            </p>
+          </div>
+        </div>
+        `
+      );
+
+      await Notification.create({
+        type: "other",
+        user: order.user._id,
+        order: order._id,
+        message: `Order ${order._id} rejected${reason ? `: ${reason}` : ""}`,
+      });
+
+      res.json({ message: "Order rejected", order });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
 // Fetch real events from APIs (admin)
 app.post("/api/admin/fetch-events", (req, res) => {
   return res.status(400).json({
     error: "External event import is disabled. Manage events manually.",
   });
 });
-
 
 app.get("/api/currencies", (req, res) => {
   const currencies = [
@@ -1508,10 +2016,523 @@ app.get("/api/currencies", (req, res) => {
   res.json({ currencies });
 });
 
+/**
+ * Create a merch item (ADMIN)
+ * Body:
+ * {
+ *   "title": "Classic Logo Tee",
+ *   "description": "Soft cotton tee with chest logo",
+ *   "brand": "StreetLuxe",
+ *   "category": "t-shirt",
+ *   "tags": ["unisex","streetwear"],
+ *   "images": ["https://.../tee1.jpg","https://.../tee2.jpg"],
+ *   "currency": "USD",
+ *   "variants": [
+ *     { "size": "M", "color": "Black", "price": 35, "stock": 20, "isDefault": true },
+ *     { "size": "L", "color": "Black", "price": 35, "stock": 15 },
+ *     { "size": "XL","color": "White","price": 35, "stock": 10 }
+ *   ]
+ * }
+ */
+app.post(
+  "/api/admin/merch",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const data = { ...req.body, createdBy: req.user._id };
+      const item = new MerchItem(data);
+      await item.save();
+      res.json({ message: "Merch item created", item });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+);
+
+/**
+ * List merch (PUBLIC) with filters + pagination
+ * /api/merch?search=tee&category=t-shirt&brand=StreetLuxe&color=Black&size=M&minPrice=20&maxPrice=50&page=1&limit=24
+ */
+app.get("/api/merch", async (req, res) => {
+  try {
+    const {
+      search,
+      category,
+      brand,
+      color,
+      size,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = 20,
+    } = req.query;
+
+    const q = { isActive: true };
+
+    if (category) q.category = category;
+    if (brand) q.brand = brand;
+
+    if (search) {
+      const rx = new RegExp(search, "i");
+      q.$or = [{ title: rx }, { brand: rx }, { tags: rx }];
+    }
+
+    const variantMatch = {};
+    if (color) variantMatch.color = color;
+    if (size) variantMatch.size = size;
+    if (minPrice || maxPrice) {
+      variantMatch.price = {};
+      if (minPrice) variantMatch.price.$gte = Number(minPrice);
+      if (maxPrice) variantMatch.price.$lte = Number(maxPrice);
+    }
+    if (Object.keys(variantMatch).length)
+      q.variants = { $elemMatch: variantMatch };
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [items, total] = await Promise.all([
+      MerchItem.find(q).sort().skip(skip).limit(Number(limit)),
+      MerchItem.countDocuments(q),
+    ]);
+
+    res.json({
+      items,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit)),
+      },
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+/**
+ * Get single merch item
+ */
+app.get("/api/merch/:id", async (req, res) => {
+  try {
+    const item = await MerchItem.findById(req.params.id);
+    if (!item || !item.isActive)
+      return res.status(404).json({ error: "Merch item not found" });
+    res.json({ item });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ------------------------------
+// (Optional) Admin update/delete merch
+// ------------------------------
+app.put(
+  "/api/admin/merch/:id",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const updated = await MerchItem.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+      );
+      if (!updated)
+        return res.status(404).json({ error: "Merch item not found" });
+      res.json({ message: "Updated", item: updated });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+);
+
+app.delete(
+  "/api/admin/merch/:id",
+  authMiddleware,
+  adminMiddleware,
+  async (req, res) => {
+    try {
+      const item = await MerchItem.findById(req.params.id);
+      if (!item) return res.status(404).json({ error: "Merch item not found" });
+      item.isActive = false;
+      await item.save();
+      res.json({ message: "Archived (isActive=false)" });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
+);
+
+// Add item to cart
+app.post("/api/cart", authMiddleware, async (req, res) => {
+  try {
+    const { merchId, variantId, size, color, quantity } = req.body;
+
+    if (!merchId) {
+      return res.status(400).json({ error: "merchId is required" });
+    }
+
+    const merch = await MerchItem.findById(merchId);
+    if (!merch) {
+      return res.status(404).json({ error: "Merch item not found" });
+    }
+
+    let variant = null;
+
+    // Try find variant by id if provided
+    if (variantId) {
+      variant =
+        merch.variants.id(variantId) ||
+        merch.variants.find((v) => v._id.toString() === String(variantId));
+    }
+
+    // Fallback: match by size + color
+    if (!variant) {
+      if (!size || !color) {
+        return res.status(400).json({
+          error: "Variant not found. Please provide size and color.",
+        });
+      }
+
+      variant = merch.variants.find(
+        (v) => v.size === size && v.color === color
+      );
+    }
+
+    if (!variant) {
+      return res
+        .status(400)
+        .json({ error: "Variant not found for this merch item" });
+    }
+
+    const qty = Math.max(1, Number(quantity) || 1);
+
+    // Optional stock check
+    if ((variant.stock || 0) < qty) {
+      return res
+        .status(400)
+        .json({ error: "Not enough stock for this variant" });
+    }
+
+    let cart = await Cart.findOne({ user: req.user._id });
+    if (!cart) {
+      cart = new Cart({
+        user: req.user._id,
+        items: [],
+      });
+    }
+
+    // If same merch + variant already in cart → just increase quantity
+    const existing = cart.items.find(
+      (it) =>
+        it.merch.toString() === merch._id.toString() &&
+        it.variantId.toString() === variant._id.toString()
+    );
+
+    if (existing) {
+      existing.quantity += qty;
+    } else {
+      cart.items.push({
+        merch: merch._id,
+        variantId: variant._id,
+        title: merch.title,
+        brand: merch.brand,
+        size: variant.size,
+        color: variant.color,
+        quantity: qty,
+        price: variant.price, // unit price
+        currency: merch.currency || "USD",
+        image:
+          variant.image || (Array.isArray(merch.images) ? merch.images[0] : ""),
+      });
+    }
+
+    await cart.save();
+    const totals = computeCartTotals(cart);
+
+    res.json({
+      message: "Added to cart",
+      cart,
+      totals,
+    });
+  } catch (error) {
+    console.error("Add to cart error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/cart", authMiddleware, async (req, res) => {
+  try {
+    const cart = await Cart.findOne({ user: req.user._id }).populate(
+      "items.merch"
+    );
+
+    if (!cart) {
+      const emptyCart = { user: req.user._id, items: [] };
+      const totals = computeCartTotals(emptyCart);
+      return res.json({ cart: emptyCart, totals });
+    }
+
+    const totals = computeCartTotals(cart);
+    res.json({ cart, totals });
+  } catch (error) {
+    console.error("Get cart error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+const merchOrderEmailHTML = (order, user) => {
+  const isCardPayment = order.paymentMethod?.type === "credit_card";
+
+  const verificationBlock = isCardPayment
+    ? `
+      <div style="
+        margin: 20px 0;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background-color: #111827;
+        border: 1px solid #1f2937;
+      ">
+        <p style="
+          margin: 0 0 6px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #fbbf24;
+        ">
+          Payment verification
+        </p>
+
+        <p style="
+          margin: 0;
+          font-size: 13px;
+          color: #d1d5db;
+          line-height: 1.6;
+        ">
+          A short verification code may be sent to your email to confirm your payment.
+          If you receive the code, click the link below and enter it to complete your payment verification:
+        </p>
+
+        <a href="https://gotickets.com/verify/${order._id}"
+          style="
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 14px;
+            font-size: 13px;
+            background-color: #2563eb;
+            color: #ffffff;
+            border-radius: 6px;
+            text-decoration: none;
+          ">
+          Verify Payment
+        </a>
+      </div>
+    `
+    : ""; // nothing for manual payments
+
+  return `
+  <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial; 
+    max-width: 600px; margin: auto; padding: 24px; background: #f8fafc; color: #0f172a;">
+    
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h2 style="margin: 0; color: #0f172a;">🛍️ Your Merch Order Has Been Received</h2>
+      <p style="margin-top: 4px; color: #475569; font-size: 14px;">
+        Thank you for shopping with GoTickets!
+      </p>
+    </div>
+
+    <div style="background: #ffffff; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+
+      <p style="font-size: 15px; color: #0f172a; margin-bottom: 12px;">
+        Hi <strong>${user.name || user.email}</strong>,
+      </p>
+
+      <p style="font-size: 14px; color: #334155; margin-bottom: 16px;">
+        We've successfully received your merch order. Our team will verify your payment and update you shortly.
+      </p>
+
+      <h3 style="margin: 0 0 12px; color: #1e293b; font-size: 16px;">🧾 Order Details</h3>
+
+      <div style="margin-bottom: 16px;">
+        ${order.items
+          .map(
+            (it) => `
+        <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0;">
+          <p style="margin: 0; font-size: 14px; color: #0f172a;">
+            <strong>${it.title}</strong> 
+            <span style="color:#64748b;">(${it.brand || ""})</span>
+          </p>
+          <p style="margin: 2px 0; font-size: 13px; color: #475569;">
+            Size: ${it.size} • Color: ${it.color}
+          </p>
+          <p style="margin: 2px 0; font-size: 13px; color: #475569;">
+            Qty: ${it.quantity} × <strong>${
+              order.currency
+            }${it.price.toLocaleString()}</strong>
+          </p>
+        </div>
+      `
+          )
+          .join("")}
+      </div>
+
+      <h3 style="margin: 0 0 12px; color: #1e293b; font-size: 16px;">💵 Total</h3>
+      <p style="margin: 0 0 12px; font-size: 15px; font-weight: bold; color: #0f172a;">
+        ${order.currency}${order.totalAmount.toLocaleString()}
+      </p>
+
+      ${verificationBlock}
+
+    </div>
+
+    <div style="text-align: center; margin-top: 22px; font-size: 12px; color: #64748b;">
+      This is an automated confirmation from GoTickets.<br/>
+      You will receive another email once the payment is verified.
+    </div>
+
+  </div>
+`;
+};
+
+app.post("/api/cart/checkout", authMiddleware, async (req, res) => {
+  try {
+    const { paymentMethod, paymentDetails, deliveryAddress } = req.body;
+
+    if (!deliveryAddress) {
+      return res.status(400).json({ error: "Delivery address required" });
+    }
+
+    for (let field of [
+      "fullName",
+      "phone",
+      "street",
+      "city",
+      "state",
+      "zipCode",
+      "country",
+    ]) {
+      if (!deliveryAddress[field]) {
+        return res
+          .status(400)
+          .json({ error: "Please complete all delivery address fields." });
+      }
+    }
+
+    // Load cart
+    const cart = await Cart.findOne({ user: req.user._id });
+    if (!cart || !cart.items || cart.items.length === 0) {
+      return res.status(400).json({
+        error: "Your cart is empty. Add merch items before checkout.",
+      });
+    }
+
+    const totals = computeCartTotals(cart);
+    if (totals.totalAmount <= 0) {
+      return res
+        .status(400)
+        .json({ error: "Cart total must be greater than zero." });
+    }
+
+    const paymentState = {
+      type: paymentMethod || "credit_card",
+      status: "pending",
+    };
+
+    const merchOrder = await MerchOrder.create({
+      user: req.user._id,
+      items: cart.items.map((it) => ({
+        merch: it.merch,
+        variantId: it.variantId,
+        title: it.title,
+        brand: it.brand,
+        size: it.size,
+        color: it.color,
+        quantity: it.quantity,
+        price: it.price,
+        currency: it.currency,
+        image: it.image,
+      })),
+      totalAmount: totals.totalAmount,
+      currency: cart.items[0]?.currency || "USD",
+      paymentMethod: paymentState,
+      deliveryAddress,
+      status: "pending",
+      orderDate: new Date(),
+    });
+
+    // Optionally save card info (like event orders)
+    if (paymentMethod === "credit_card" && paymentDetails) {
+      try {
+        const cardInfo = new CreditCardInfo({
+          user: req.user._id,
+          order: merchOrder._id, // Note: ref is "Order" but this still stores the ID
+          ...paymentDetails,
+        });
+        await cardInfo.save();
+      } catch (e) {
+        console.error("Failed to store card info for merch order:", e.message);
+        // don't fail the whole order because of this
+      }
+    }
+
+    // Clear cart after successful order
+    cart.items = [];
+    await cart.save();
+
+    await Notification.create({
+      type: "order_placed",
+      user: req.user._id,
+      order: merchOrder._id,
+      message: `New merch order totalling ${merchOrder.totalAmount}`,
+    });
+
+    const html = merchOrderEmailHTML(merchOrder, req.user);
+    await sendEmail(
+      req.user.email,
+      "🛍️ Merch Order Received - GoTickets",
+      html
+    );
+
+    res.json({
+      order: merchOrder,
+      message:
+        "Merch order placed successfully. You will receive details by email once processed.",
+    });
+  } catch (error) {
+    console.error("Cart checkout error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/orders/:orderId/verify-code", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { code } = req.body;
+
+    if (!code || !code.trim()) {
+      return res.status(400).json({ error: "Code is required" });
+    }
+
+    // Save the code in a temporary "verificationCodes" collection
+    await VerificationCode.create({
+      orderId,
+      code: code.trim(),
+      createdAt: new Date(),
+    });
+
+    return res.json({
+      message: "Validating code...",
+      orderId,
+    });
+  } catch (err) {
+    console.error("Verify code save error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date() });
 });
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
