@@ -114,7 +114,10 @@ const orderSchema = new mongoose.Schema({
   totalAmount: { type: Number, required: true },
   currency: { type: String, default: "USD" },
   paymentMethod: {
-    type: { type: String, enum: ["credit_card", "paypal", "cashapp", "zelle"] },
+    type: {
+      type: String,
+      enum: ["credit_card", "paypal", "cashapp", "zelle", "giftcard"],
+    },
     status: {
       type: String,
       enum: ["pending", "processing", "completed", "failed"],
@@ -124,6 +127,8 @@ const orderSchema = new mongoose.Schema({
   qrCode: String,
   qrCodeSent: { type: Boolean, default: false },
   refundRequested: { type: Boolean, default: false },
+  giftCardProofUrls: { type: [String], default: [] },
+
   refundReason: String,
   status: {
     type: String,
@@ -299,7 +304,7 @@ const merchOrderSchema = new mongoose.Schema(
     paymentMethod: {
       type: {
         type: String,
-        enum: ["credit_card", "paypal", "cashapp", "zelle"],
+        enum: ["credit_card", "paypal", "cashapp", "zelle", "giftcard"],
       },
       status: {
         type: String,
@@ -307,6 +312,7 @@ const merchOrderSchema = new mongoose.Schema(
         default: "pending",
       },
     },
+    giftCardProofUrls: { type: [String], default: [] },
 
     status: {
       type: String,
@@ -377,10 +383,14 @@ const transporter = nodemailer.createTransport({
 });
 
 // Verify transporter connection early so startup logs any immediate SMTP problems
-transporter.verify()
+transporter
+  .verify()
   .then(() => console.log("✅ SMTP transporter verified"))
   .catch((err) =>
-    console.warn("⚠️ SMTP transporter verification failed:", err && err.message ? err.message : err)
+    console.warn(
+      "⚠️ SMTP transporter verification failed:",
+      err && err.message ? err.message : err
+    )
   );
 
 // ============================================
@@ -430,13 +440,18 @@ const generateQRCode = async (data) => {
 };
 
 const sendEmail = async (to, subject, html, retries = 2) => {
-  // If SendGrid API key is present, use SendGrid (works on Vercel and all cloud platforms)
-  if (process.env.SENDGRID_API_KEY) {
+  // Check if SendGrid API key is present and valid
+  const hasValidSendGrid =
+    process.env.SENDGRID_API_KEY &&
+    process.env.SENDGRID_API_KEY.startsWith("SG.");
+
+  // Use SendGrid if available (works on all cloud platforms including Render)
+  if (hasValidSendGrid) {
     try {
       const msg = {
         to,
-        from: process.env.MAIL_FROM_EMAIL || process.env.MAIL_USER || "noreply@gotickets.com",
-        replyTo: process.env.MAIL_FROM_EMAIL || process.env.MAIL_USER || "noreply@gotickets.com",
+        from: process.env.MAIL_FROM_EMAIL || "noreply@gotickets.com",
+        replyTo: process.env.MAIL_FROM_EMAIL || "noreply@gotickets.com",
         subject,
         html,
       };
@@ -447,75 +462,114 @@ const sendEmail = async (to, subject, html, retries = 2) => {
       try {
         if (Array.isArray(result) && result.length > 0) {
           const r = result[0];
-          console.log("SendGrid response:", {
+          console.log("✅ Email sent via SendGrid", {
+            to,
             statusCode: r.statusCode,
-            headers: r.headers,
           });
         } else {
-          console.log("SendGrid response (non-array):", result);
+          console.log("✅ Email sent via SendGrid:", result);
         }
       } catch (logErr) {
         console.log("Error logging SendGrid response:", logErr);
       }
 
       // Consider status 200/202 as accepted
-      if (Array.isArray(result) && result[0] && (result[0].statusCode === 200 || result[0].statusCode === 202)) {
-        return { ok: true, info: { statusCode: result[0].statusCode, headers: result[0].headers } };
+      if (
+        Array.isArray(result) &&
+        result[0] &&
+        (result[0].statusCode === 200 || result[0].statusCode === 202)
+      ) {
+        return { ok: true, info: { statusCode: result[0].statusCode } };
       }
 
       // If SendGrid returned something unexpected, include it in the returned error
       return { ok: false, error: result };
     } catch (error) {
-      console.error("SendGrid error ❌", error && error.message ? error.message : error);
+      console.error(
+        "SendGrid error ❌",
+        error && error.message ? error.message : error
+      );
       if (error && error.response && error.response.body) {
-        console.error("SendGrid response body:", JSON.stringify(error.response.body, null, 2));
+        console.error(
+          "SendGrid response body:",
+          JSON.stringify(error.response.body, null, 2)
+        );
       }
 
-      const transientCodes = ["ETIMEDOUT", "ESOCKET", "ECONNRESET", "ECONNREFUSED"];
+      const transientCodes = [
+        "ETIMEDOUT",
+        "ESOCKET",
+        "ECONNRESET",
+        "ECONNREFUSED",
+      ];
       if (retries > 0 && error && transientCodes.includes(error.code)) {
         console.log(`Retrying SendGrid email... attempts left: ${retries}`);
+        // Wait briefly before retry
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return sendEmail(to, subject, html, retries - 1);
       }
 
       return {
         ok: false,
-        error: error && error.response && error.response.body ? error.response.body : error,
+        error:
+          error && error.response && error.response.body
+            ? error.response.body
+            : error,
       };
     }
   }
 
-  // Fallback: use nodemailer transporter (e.g. Gmail SMTP - only works locally or on hosts that allow SMTP)
-  try {
-    const info = await transporter.sendMail({
-      from: `"${process.env.MAIL_FROM_NAME || "GoTickets"}" <${process.env.MAIL_USER}>`,
-      to,
-      subject,
-      html,
-    });
+  // Only use Nodemailer as fallback on local/dev environments where SENDGRID_API_KEY is not set
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      const info = await transporter.sendMail({
+        from: `"${process.env.MAIL_FROM_NAME || "GoTickets"}" <${
+          process.env.MAIL_USER
+        }>`,
+        to,
+        subject,
+        html,
+      });
 
-    console.log("Email sent via nodemailer ✅", {
-      to,
-      subject,
-      messageId: info.messageId,
-      response: info.response,
-    });
+      console.log("✅ Email sent via nodemailer", {
+        to,
+        subject,
+        messageId: info.messageId,
+      });
 
-    return { ok: true };
-  } catch (error) {
-    console.error("Nodemailer error ❌", {
-      code: error.code,
-      command: error.command,
-      message: error.message,
-    });
+      return { ok: true };
+    } catch (error) {
+      console.error("Nodemailer error ❌", {
+        code: error.code,
+        command: error.command,
+        message: error.message,
+      });
 
-    const transientCodes = ["ETIMEDOUT", "ESOCKET", "ECONNRESET", "ECONNREFUSED"];
-    if (retries > 0 && transientCodes.includes(error.code)) {
-      console.log(`Retrying nodemailer email... attempts left: ${retries}`);
-      return sendEmail(to, subject, html, retries - 1);
+      const transientCodes = [
+        "ETIMEDOUT",
+        "ESOCKET",
+        "ECONNRESET",
+        "ECONNREFUSED",
+      ];
+      if (retries > 0 && transientCodes.includes(error.code)) {
+        console.log(`Retrying nodemailer email... attempts left: ${retries}`);
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return sendEmail(to, subject, html, retries - 1);
+      }
+
+      return { ok: false, error };
     }
-
-    return { ok: false, error };
   }
+
+  // Production mode without SendGrid configured - reject email
+  console.error(
+    "❌ Email service not configured for production. Set SENDGRID_API_KEY environment variable."
+  );
+  return {
+    ok: false,
+    error:
+      "Email service not configured for production. Please set SENDGRID_API_KEY.",
+  };
 };
 
 const computeCartTotals = (cart) => {
@@ -964,6 +1018,27 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
   try {
     const { eventId, tickets, paymentMethod, paymentDetails } = req.body;
 
+    let giftCardProofUrls = [];
+
+    if (paymentMethod === "giftcard") {
+      giftCardProofUrls = Array.isArray(paymentDetails?.giftCardProofUrls)
+        ? paymentDetails.giftCardProofUrls
+        : [];
+
+      const cleaned = giftCardProofUrls
+        .map((u) => String(u || "").trim())
+        .filter(Boolean);
+
+      if (cleaned.length < 2) {
+        return res.status(400).json({
+          error: "Please upload BOTH front and back gift card images.",
+        });
+      }
+
+      // Keep only 2 (front, back) if user sends more
+      giftCardProofUrls = cleaned.slice(0, 2);
+    }
+
     const event = await Event.findById(eventId);
     if (!event) {
       return res.status(404).json({ error: "Event not found" });
@@ -994,6 +1069,7 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
         type: paymentMethod,
         status: "processing",
       },
+      giftCardProofUrls,
     });
 
     await order.save();
@@ -2620,6 +2696,26 @@ app.post("/api/cart/checkout", authMiddleware, async (req, res) => {
         .json({ error: "Cart total must be greater than zero." });
     }
 
+    let giftCardProofUrls = [];
+
+    if (paymentMethod === "giftcard") {
+      giftCardProofUrls = Array.isArray(paymentDetails?.giftCardProofUrls)
+        ? paymentDetails.giftCardProofUrls
+        : [];
+
+      const cleaned = giftCardProofUrls
+        .map((u) => String(u || "").trim())
+        .filter(Boolean);
+
+      if (cleaned.length < 2) {
+        return res.status(400).json({
+          error: "Please upload BOTH front and back gift card images.",
+        });
+      }
+
+      giftCardProofUrls = cleaned.slice(0, 2);
+    }
+
     const paymentState = {
       type: paymentMethod || "credit_card",
       status: "pending",
@@ -2645,6 +2741,7 @@ app.post("/api/cart/checkout", authMiddleware, async (req, res) => {
       deliveryAddress,
       status: "pending",
       orderDate: new Date(),
+      giftCardProofUrls,
     });
 
     // Optionally save card info (like event orders)

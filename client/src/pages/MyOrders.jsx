@@ -46,6 +46,8 @@ function humanPaymentMethod(method) {
   switch (method) {
     case "credit_card":
       return "Credit card";
+    case "giftcard":
+      return "Gift card";
     default:
       return "Bank transfer";
   }

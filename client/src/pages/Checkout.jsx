@@ -1,14 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   ArrowLeft,
   CalendarDays,
-  MapPin,
   Ticket,
   CreditCard,
   Banknote,
   AlertTriangle,
   ShieldCheck,
+  Gift,
+  UploadCloud,
+  CheckCircle2,
+  XCircle,
+  Image as ImageIcon,
 } from "lucide-react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -72,6 +76,15 @@ export default function Checkout() {
     country: "",
   });
 
+  // ---------------------------
+  // Gift card proof (front & back)
+  // ---------------------------
+  const fileRef = useRef(null);
+  const [giftUploading, setGiftUploading] = useState(false);
+  const [giftUploadError, setGiftUploadError] = useState("");
+  // Index 0 = front, 1 = back
+  const [giftCardProofUrls, setGiftCardProofUrls] = useState(["", ""]);
+
   useEffect(() => {
     if (!eventId) {
       setLoadingEvent(false);
@@ -101,7 +114,6 @@ export default function Checkout() {
     };
 
     fetchEvent();
-
     return () => {
       active = false;
     };
@@ -109,7 +121,6 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!user) {
-      // If not logged in, gently push to login but allow them to come back
       navigate("/login", {
         state: {
           from: `/checkout?eventId=${eventId}&qty=${qty}`,
@@ -126,12 +137,124 @@ export default function Checkout() {
 
   const currency = event?.price?.currency || "USD";
   const symbol = currencySymbol(currency);
-
   const total = basePrice * qty;
 
   const handleCardChange = (field, value) => {
     setCard((prev) => ({ ...prev, [field]: value }));
     setOrderError("");
+  };
+
+  const resetGiftInputs = () => {
+    setGiftUploadError("");
+    setGiftCardProofUrls(["", ""]);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const removeGiftAt = (idx) => {
+    setGiftUploadError("");
+    setGiftCardProofUrls((prev) => {
+      const next = [...prev];
+      next[idx] = "";
+      return next;
+    });
+  };
+
+  // Upload helper: expects Cloudinary creds in env and uses unsigned preset
+  const uploadGiftCardProof = async (file) => {
+    const cloudName =
+      import.meta.env.VITE_CLOUDINARY_CLOUD_NAME ||
+      import.meta.env.VITE_CLOUDINARY_CLOUDINARY_NAME; // fallback
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      throw new Error(
+        "Cloudinary config missing. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET."
+      );
+    }
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("upload_preset", uploadPreset);
+    form.append("folder", "gotickets/giftcards");
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { method: "POST", body: form }
+    );
+
+    const data = await res.json();
+    if (!res.ok) {
+      const msg = data?.error?.message || "Gift card upload failed.";
+      throw new Error(msg);
+    }
+
+    return data.secure_url;
+  };
+
+  const onGiftFilesPick = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    setOrderError("");
+    setOrderSuccess("");
+    setGiftUploadError("");
+
+    // We only want 2 images: front & back
+    const picked = files.slice(0, 2);
+
+    // Basic validation first
+    for (const file of picked) {
+      const okType = /^image\/(png|jpe?g|webp|gif)$/i.test(file.type);
+      if (!okType) {
+        setGiftUploadError(
+          "Please upload only images (PNG, JPG, WEBP, or GIF)."
+        );
+        return;
+      }
+      const maxMb = 8;
+      if (file.size > maxMb * 1024 * 1024) {
+        setGiftUploadError(
+          `Image too large. Please use files under ${maxMb}MB.`
+        );
+        return;
+      }
+    }
+
+    try {
+      setGiftUploading(true);
+
+      // Upload sequentially so UI stays predictable
+      const urls = [];
+      for (const file of picked) {
+        const url = await uploadGiftCardProof(file);
+        urls.push(url);
+      }
+
+      // Place them into [front, back]
+      setGiftCardProofUrls((prev) => {
+        const next = [...prev];
+        // Fill empty slots first, in order
+        let i = 0;
+        for (let slot = 0; slot < next.length && i < urls.length; slot++) {
+          if (!next[slot]) {
+            next[slot] = urls[i++];
+          }
+        }
+        // If still have urls and slots are filled, overwrite from start
+        while (i < urls.length) {
+          const overwriteIndex = i - (urls.length - 2); // keep in bounds-ish
+          next[Math.max(0, Math.min(1, overwriteIndex))] = urls[i++];
+        }
+        return next;
+      });
+    } catch (err) {
+      setGiftUploadError(
+        err?.message || "Could not upload gift card images. Try again."
+      );
+      setGiftCardProofUrls(["", ""]);
+    } finally {
+      setGiftUploading(false);
+    }
   };
 
   const handlePlaceOrder = async (e) => {
@@ -159,7 +282,8 @@ export default function Checkout() {
         !card.cardNumber ||
         !card.cardHolderName ||
         !card.expiryDate ||
-        !card.cvv || !card.street ||
+        !card.cvv ||
+        !card.street ||
         !card.city ||
         !card.state ||
         !card.country
@@ -171,11 +295,25 @@ export default function Checkout() {
       }
     }
 
+    if (paymentMethod === "giftcard") {
+      if (giftUploading) {
+        setOrderError("Please wait for the gift card uploads to finish.");
+        return;
+      }
+      const [front, back] = giftCardProofUrls;
+      if (!front || !back) {
+        setOrderError(
+          "Please upload BOTH the front and back of the scratched gift card before placing the order."
+        );
+        return;
+      }
+    }
+
     try {
       setProcessingOrder(true);
 
       const tickets = Array.from({ length: qty }).map(() => ({
-        seatNumber: "", // optional for now
+        seatNumber: "",
         price: basePrice,
         currency,
       }));
@@ -195,6 +333,10 @@ export default function Checkout() {
                 country: card.country,
               },
             }
+          : paymentMethod === "giftcard"
+          ? {
+              giftCardProofUrls, // ✅ send both URLs to server
+            }
           : null;
 
       const res = await api.post("/orders", {
@@ -209,7 +351,6 @@ export default function Checkout() {
           "Your order has been placed. Watch your email for confirmation and QR tickets."
       );
 
-      // Optional: navigate to "My Orders" after a little delay
       setTimeout(() => {
         navigate("/my-orders");
       }, 1600);
@@ -226,6 +367,10 @@ export default function Checkout() {
 
   const isPastEvent =
     event?.isPastEvent || (event && new Date(event.date) < new Date());
+
+  const hasGiftFront = !!giftCardProofUrls[0];
+  const hasGiftBack = !!giftCardProofUrls[1];
+  const giftReady = hasGiftFront && hasGiftBack;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
@@ -286,7 +431,6 @@ export default function Checkout() {
                 <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-3 flex gap-3 mb-4">
                   <div className="h-16 w-16 rounded-xl bg-slate-800 overflow-hidden shrink-0">
                     {event.images?.[0] ? (
-                      // eslint-disable-next-line jsx-a11y/alt-text
                       <img
                         src={event.images[0]}
                         alt={event.title}
@@ -300,6 +444,7 @@ export default function Checkout() {
                       </div>
                     )}
                   </div>
+
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-slate-100 line-clamp-2">
                       {event.title}
@@ -316,6 +461,7 @@ export default function Checkout() {
                         {formatDate(event.date)}
                       </span>
                     </div>
+
                     {isPastEvent && (
                       <p className="mt-1 text-[11px] text-amber-300">
                         Note: this event date has already passed. New bookings
@@ -370,14 +516,12 @@ export default function Checkout() {
                           : "TBA"}
                       </span>
                     </div>
+
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-300">
-                        Number of tickets
-                      </span>
-                      <span className="text-slate-100 font-medium">
-                        {qty}
-                      </span>
+                      <span className="text-slate-300">Number of tickets</span>
+                      <span className="text-slate-100 font-medium">{qty}</span>
                     </div>
+
                     <div className="flex items-center justify-between pt-1 border-t border-slate-800 mt-1">
                       <span className="text-slate-300">Estimated total</span>
                       <span className="text-amber-300 font-semibold">
@@ -386,9 +530,10 @@ export default function Checkout() {
                           : "To be confirmed"}
                       </span>
                     </div>
+
                     <p className="text-[11px] text-slate-500 mt-1">
-                      Final total may include any organiser fees or taxes,
-                      which will be reflected in your order confirmation email.
+                      Final total may include any organiser fees or taxes, which
+                      will be reflected in your order confirmation email.
                     </p>
                   </div>
                 </div>
@@ -433,11 +578,13 @@ export default function Checkout() {
               </div>
             )}
 
-            {/* Payment method selector */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <button
                 type="button"
-                onClick={() => setPaymentMethod("credit_card")}
+                onClick={() => {
+                  setPaymentMethod("credit_card");
+                  setGiftUploadError("");
+                }}
                 className={`rounded-2xl border px-3 py-3 text-left text-xs flex flex-col gap-1 ${
                   paymentMethod === "credit_card"
                     ? "border-amber-500/80 bg-slate-950/90"
@@ -455,9 +602,12 @@ export default function Checkout() {
                 </span>
               </button>
 
-              <button
+              {/* <button
                 type="button"
-                onClick={() => setPaymentMethod("paypal")}
+                onClick={() => {
+                  setPaymentMethod("paypal");
+                  setGiftUploadError("");
+                }}
                 className={`rounded-2xl border px-3 py-3 text-left text-xs flex flex-col gap-1 ${
                   paymentMethod === "paypal"
                     ? "border-amber-500/80 bg-slate-950/90"
@@ -473,12 +623,33 @@ export default function Checkout() {
                 <span className="text-[11px] text-slate-400">
                   Pay via PayPal / CashApp / Zelle as configured by admin.
                 </span>
+              </button> */}
+
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("giftcard")}
+                className={`rounded-2xl border px-3 py-3 text-left text-xs flex flex-col gap-1 ${
+                  paymentMethod === "giftcard"
+                    ? "border-amber-500/80 bg-slate-950/90"
+                    : "border-slate-800 bg-slate-950/60 hover:border-slate-700"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Gift className="w-4 h-4 text-amber-400" />
+                  <span className="font-semibold text-slate-100">
+                    Gift card
+                  </span>
+                </div>
+                <span className="text-[11px] text-slate-400">
+                  Upload scratched card front & back.
+                </span>
               </button>
             </div>
 
             {/* Payment details */}
             {paymentMethod === "credit_card" ? (
               <div className="space-y-3 mt-2">
+                {/* ... your card fields stay the same ... */}
                 <div className="space-y-1">
                   <label className="text-[11px] text-slate-400">
                     Card number
@@ -493,6 +664,7 @@ export default function Checkout() {
                     className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
                   />
                 </div>
+
                 <div className="space-y-1">
                   <label className="text-[11px] text-slate-400">
                     Name on card
@@ -507,6 +679,7 @@ export default function Checkout() {
                     className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
                   />
                 </div>
+
                 <div className="grid grid-cols-[minmax(0,1fr),minmax(0,0.7fr)] gap-3">
                   <div className="space-y-1">
                     <label className="text-[11px] text-slate-400">
@@ -522,14 +695,13 @@ export default function Checkout() {
                       className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
                     />
                   </div>
+
                   <div className="space-y-1">
                     <label className="text-[11px] text-slate-400">CVV</label>
                     <input
                       type="password"
                       value={card.cvv}
-                      onChange={(e) =>
-                        handleCardChange("cvv", e.target.value)
-                      }
+                      onChange={(e) => handleCardChange("cvv", e.target.value)}
                       placeholder="123"
                       className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
                     />
@@ -543,9 +715,7 @@ export default function Checkout() {
                   <input
                     type="text"
                     value={card.street}
-                    onChange={(e) =>
-                      handleCardChange("street", e.target.value)
-                    }
+                    onChange={(e) => handleCardChange("street", e.target.value)}
                     placeholder="Street address"
                     className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70 mb-2"
                   />
@@ -553,9 +723,7 @@ export default function Checkout() {
                     <input
                       type="text"
                       value={card.city}
-                      onChange={(e) =>
-                        handleCardChange("city", e.target.value)
-                      }
+                      onChange={(e) => handleCardChange("city", e.target.value)}
                       placeholder="City"
                       className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
                     />
@@ -597,11 +765,185 @@ export default function Checkout() {
                   environment.
                 </p>
               </div>
+            ) : paymentMethod === "giftcard" ? (
+              <div className="space-y-3 mt-2 text-xs text-slate-300">
+                <div className="rounded-2xl border border-amber-500/30 bg-amber-500/10 px-3 py-3">
+                  <p className="text-[12px] text-amber-100 font-semibold">
+                    Gift card instructions (important)
+                  </p>
+                  <p className="mt-1 text-[11px] text-slate-200 leading-relaxed">
+                    Please upload <strong>two clear photos</strong>:
+                    <br />• <strong>Front</strong> of the scratched card (code
+                    visible)
+                    <br />• <strong>Back</strong> of the scratched card
+                    <br />
+                    <span className="text-slate-300">
+                      Blurry photos = delayed verification 😅
+                    </span>
+                  </p>
+                </div>
+
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-2">
+                      <UploadCloud className="w-4 h-4 text-amber-400 mt-0.5" />
+                      <div>
+                        <p className="text-slate-100 font-semibold text-xs">
+                          Upload gift card photos
+                        </p>
+                        <p className="text-[11px] text-slate-400">
+                          Select up to <strong>2 images</strong> (front & back).
+                        </p>
+                      </div>
+                    </div>
+
+                    {hasGiftFront || hasGiftBack ? (
+                      <button
+                        type="button"
+                        onClick={resetGiftInputs}
+                        className="text-[11px] text-slate-300 hover:text-amber-300"
+                      >
+                        Clear all
+                      </button>
+                    ) : null}
+                  </div>
+
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={onGiftFilesPick}
+                    className="mt-3 block w-full text-[11px] text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-800 file:px-3 file:py-2 file:text-[11px] file:font-semibold file:text-slate-50 hover:file:bg-slate-700"
+                  />
+
+                  {giftUploading && (
+                    <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-300">
+                      <span className="h-3.5 w-3.5 border-2 border-slate-400/70 border-t-transparent rounded-full animate-spin" />
+                      Uploading gift card image(s)…
+                    </div>
+                  )}
+
+                  {giftUploadError && (
+                    <div className="mt-3 rounded-xl bg-red-500/10 border border-red-500/30 px-3 py-2 text-[11px] text-red-100 flex items-start gap-2">
+                      <XCircle className="w-3.5 h-3.5 mt-0.5" />
+                      <span>{giftUploadError}</span>
+                    </div>
+                  )}
+
+                  {/* Front / Back previews */}
+                  <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/60 overflow-hidden">
+                      <div className="px-3 py-2 border-b border-slate-800 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="w-4 h-4 text-amber-300" />
+                          <span className="text-[11px] text-slate-200 font-semibold">
+                            Front (scratched)
+                          </span>
+                        </div>
+                        {hasGiftFront ? (
+                          <button
+                            type="button"
+                            onClick={() => removeGiftAt(0)}
+                            className="text-[11px] text-slate-300 hover:text-amber-300"
+                          >
+                            Remove
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-500">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-36 bg-slate-900/50 flex items-center justify-center">
+                        {hasGiftFront ? (
+                          <img
+                            src={giftCardProofUrls[0]}
+                            alt="Gift card front"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-[11px] text-slate-500 flex items-center gap-2">
+                            <UploadCloud className="w-4 h-4" />
+                            Upload front image
+                          </div>
+                        )}
+                      </div>
+                      {hasGiftFront ? (
+                        <div className="px-3 py-2 text-[10px] text-slate-500 flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          Uploaded
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/60 overflow-hidden">
+                      <div className="px-3 py-2 border-b border-slate-800 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <ImageIcon className="w-4 h-4 text-amber-300" />
+                          <span className="text-[11px] text-slate-200 font-semibold">
+                            Back
+                          </span>
+                        </div>
+                        {hasGiftBack ? (
+                          <button
+                            type="button"
+                            onClick={() => removeGiftAt(1)}
+                            className="text-[11px] text-slate-300 hover:text-amber-300"
+                          >
+                            Remove
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-500">
+                            Pending
+                          </span>
+                        )}
+                      </div>
+                      <div className="h-36 bg-slate-900/50 flex items-center justify-center">
+                        {hasGiftBack ? (
+                          <img
+                            src={giftCardProofUrls[1]}
+                            alt="Gift card back"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="text-[11px] text-slate-500 flex items-center gap-2">
+                            <UploadCloud className="w-4 h-4" />
+                            Upload back image
+                          </div>
+                        )}
+                      </div>
+                      {hasGiftBack ? (
+                        <div className="px-3 py-2 text-[10px] text-slate-500 flex items-center gap-2">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          Uploaded
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {!giftReady && (
+                    <p className="mt-3 text-[10px] text-slate-500">
+                      You must upload <strong>both</strong> front & back before
+                      you can place the order.
+                    </p>
+                  )}
+                </div>
+
+                <p className="text-[11px] text-slate-500">
+                  After placing your order, you’ll receive an email confirming
+                  we’ve received your gift card proof. Once verified, your QR
+                  tickets will be issued.
+                </p>
+              </div>
             ) : (
               <div className="space-y-3 mt-2 text-xs text-slate-300">
                 <p>
                   You’ve chosen to pay via{" "}
-                  <span className="font-semibold">PayPal / CashApp / Zelle</span>{" "}.
+                  <span className="font-semibold">
+                    PayPal / CashApp / Zelle
+                  </span>{" "}
+                  .
                 </p>
                 <p className="text-slate-400">
                   After placing your order, you’ll receive an email with
@@ -632,7 +974,9 @@ export default function Checkout() {
                   loadingEvent ||
                   !!eventError ||
                   !event ||
-                  !user
+                  !user ||
+                  (paymentMethod === "giftcard" &&
+                    (giftUploading || !giftReady))
                 }
                 className="mt-1 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/40 text-slate-950 font-semibold text-sm py-3 transition-all shadow-lg shadow-amber-500/30"
               >

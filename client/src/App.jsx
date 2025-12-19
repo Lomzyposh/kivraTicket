@@ -1,5 +1,5 @@
 // src/App.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -76,11 +76,14 @@ const Layout = ({ children }) => {
 };
 
 function App() {
+  const navigate = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [navigate]);
   return (
     <AuthProvider>
       <CartProvider>
         <Layout>
-          
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/events" element={<Events />} />

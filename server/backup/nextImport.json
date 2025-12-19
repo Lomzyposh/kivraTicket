@@ -1,167 +1,7 @@
 [
   {
-    "title": "2026 World Cup - Match 31 (Group D)",
-    "description": "The 2026 FIFA World Cup heads to Santa Clara as Levi’s Stadium hosts a thrilling Group D clash under California sun.",
-    "category": "sports",
-    "venue": "Levi's Stadium",
-    "location": {
-      "city": "Santa Clara",
-      "state": "CA",
-      "country": "USA",
-      "address": "4900 Marie P DeBartolo Way, Santa Clara, CA 95054"
-    },
-    "date": "2026-06-19",
-    "time": "TBD",
-    "price": { "min": 280, "max": 4324, "currency": "USD" },
-    "totalTickets": 85,
-    "availableTickets": 10,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 32 (Group D: USA vs TBD)",
-    "description": "All eyes on Seattle as the USA take the pitch at Lumen Field for a dramatic Group D encounter filled with home-crowd energy.",
-    "category": "sports",
-    "venue": "Lumen Field",
-    "location": {
-      "city": "Seattle",
-      "state": "WA",
-      "country": "USA",
-      "address": "800 Occidental Ave S, Seattle, WA 98134"
-    },
-    "date": "2026-06-19",
-    "time": "TBD",
-    "price": { "min": 460, "max": 7592, "currency": "USD" },
-    "totalTickets": 90,
-    "availableTickets": 12,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 33 (Group E)",
-    "description": "Toronto brings global football flair as BMO Field hosts this Group E face-off amid Canadian summer excitement.",
-    "category": "sports",
-    "venue": "BMO Field",
-    "location": {
-      "city": "Toronto",
-      "state": "ON",
-      "country": "Canada",
-      "address": "170 Princes' Blvd, Toronto, ON M6K 3C3"
-    },
-    "date": "2026-06-20",
-    "time": "TBD",
-    "price": { "min": 351, "max": 5120, "currency": "USD" },
-    "totalTickets": 48,
-    "availableTickets": 6,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 34 (Group E)",
-    "description": "Kansas City’s Arrowhead roars to life as Group E action unfolds in a festival of football and fan passion.",
-    "category": "sports",
-    "venue": "GEHA Field at Arrowhead Stadium",
-    "location": {
-      "city": "Kansas City",
-      "state": "MO",
-      "country": "USA",
-      "address": "1 Arrowhead Dr, Kansas City, MO 64129"
-    },
-    "date": "2026-06-20",
-    "time": "TBD",
-    "price": { "min": 158, "max": 4188, "currency": "USD" },
-    "totalTickets": 69,
-    "availableTickets": 9,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 35 (Group F)",
-    "description": "Houston’s NRG Stadium welcomes Group F nations in a fiery southern showdown beneath its retractable roof.",
-    "category": "sports",
-    "venue": "NRG Stadium",
-    "location": {
-      "city": "Houston",
-      "state": "TX",
-      "country": "USA",
-      "address": "NRG Pkwy, Houston, TX 77054"
-    },
-    "date": "2026-06-20",
-    "time": "TBD",
-    "price": { "min": 251, "max": 4088, "currency": "USD" },
-    "totalTickets": 71,
-    "availableTickets": 8,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 37 (Group H)",
-    "description": "A sizzling Group H encounter unfolds at Hard Rock Stadium in Miami Gardens — where football meets festival vibes.",
-    "category": "sports",
-    "venue": "Hard Rock Stadium",
-    "location": {
-      "city": "Miami Gardens",
-      "state": "FL",
-      "country": "USA",
-      "address": "347 Don Shula Dr, Miami Gardens, FL 33056"
-    },
-    "date": "2026-06-21",
-    "time": "TBD",
-    "price": { "min": 312, "max": 4444, "currency": "USD" },
-    "totalTickets": 72,
-    "availableTickets": 10,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 38 (Group H)",
-    "description": "Atlanta’s Mercedes-Benz Stadium turns into a global cauldron as Group H nations battle before a roaring crowd.",
-    "category": "sports",
-    "venue": "Mercedes-Benz Stadium",
-    "location": {
-      "city": "Atlanta",
-      "state": "GA",
-      "country": "USA",
-      "address": "1 AMG Way NW, Atlanta, GA 30313"
-    },
-    "date": "2026-06-21",
-    "time": "TBD",
-    "price": { "min": 207, "max": 4388, "currency": "USD" },
-    "totalTickets": 83,
-    "availableTickets": 10,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 39 (Group G)",
-    "description": "SoFi Stadium stages a dazzling Group G showdown under LA lights, with football magic and Hollywood atmosphere.",
-    "category": "sports",
-    "venue": "SoFi Stadium",
-    "location": {
-      "city": "Inglewood",
-      "state": "CA",
-      "country": "USA",
-      "address": "1001 Stadium Dr, Inglewood, CA 90301"
-    },
-    "date": "2026-06-21",
-    "time": "TBD",
-    "price": { "min": 294, "max": 7040, "currency": "USD" },
-    "totalTickets": 83,
-    "availableTickets": 9,
-    "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
-    ]
-  },
-  {
-    "title": "2026 World Cup - Match 40 (Group G)",
-    "description": "BC Place once again lights up Vancouver with a Group G clash blending passion, pride, and Pacific-coast energy.",
+    "title": "2026 World Cup - Match 27 (Group B)",
+    "description": "Canada steps onto home soil at BC Place Stadium as World Cup energy shakes Vancouver in this Group B showdown.",
     "category": "sports",
     "venue": "BC Place Stadium",
     "location": {
@@ -170,13 +10,233 @@
       "country": "Canada",
       "address": "777 Pacific Blvd, Vancouver, BC V6B 4Y8"
     },
-    "date": "2026-06-21",
+    "date": "2026-06-18",
     "time": "TBD",
-    "price": { "min": 289, "max": 4736, "currency": "USD" },
-    "totalTickets": 68,
+    "price": {
+      "min": 479,
+      "max": 5832,
+      "currency": "USD"
+    },
+    "totalTickets": 72,
+    "availableTickets": 6,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "2026 World Cup - Match 13 (Group H)",
+    "description": "Hard Rock Stadium hosts a heated Group H battle with tropical Miami energy and elite global football talent.",
+    "category": "sports",
+    "venue": "Hard Rock Stadium",
+    "location": {
+      "city": "Miami Gardens",
+      "state": "FL",
+      "country": "USA",
+      "address": "347 Don Shula Dr, Miami Gardens, FL 33056"
+    },
+    "date": "2026-06-15",
+    "time": "TBD",
+    "price": {
+      "min": 322,
+      "max": 5576,
+      "currency": "USD"
+    },
+    "totalTickets": 81,
+    "availableTickets": 9,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "2026 World Cup - Match 9 (Group E)",
+    "description": "Philadelphia lights up as Group E nations clash in a high-stakes global meeting at Lincoln Financial Field.",
+    "category": "sports",
+    "venue": "Lincoln Financial Field",
+    "location": {
+      "city": "Philadelphia",
+      "state": "PA",
+      "country": "USA",
+      "address": "1 Lincoln Financial Field Way, Philadelphia, PA 19148"
+    },
+    "date": "2026-06-14",
+    "time": "TBD",
+    "price": {
+      "min": 236,
+      "max": 4296,
+      "currency": "USD"
+    },
+    "totalTickets": 66,
     "availableTickets": 8,
     "images": [
-      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "2026 World Cup - Match 8 (Group B)",
+    "description": "Bay Area fans fill Levi’s Stadium for this Group B matchup packed with intensity and West Coast pride.",
+    "category": "sports",
+    "venue": "Levi’s Stadium",
+    "location": {
+      "city": "Santa Clara",
+      "state": "CA",
+      "country": "USA",
+      "address": "4900 Marie P DeBartolo Way, Santa Clara, CA 95054"
+    },
+    "date": "2026-06-13",
+    "time": "TBD",
+    "price": {
+      "min": 307,
+      "max": 4804,
+      "currency": "USD"
+    },
+    "totalTickets": 106,
+    "availableTickets": 12,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "Navy Midshipmen vs Army West Point Black Knights",
+    "description": "One of college football’s most legendary rivalries ignites MetLife Stadium in an emotional military showdown.",
+    "category": "sports",
+    "venue": "MetLife Stadium",
+    "location": {
+      "city": "East Rutherford",
+      "state": "NJ",
+      "country": "USA",
+      "address": "1 MetLife Stadium Dr, East Rutherford, NJ 07073"
+    },
+    "date": "2026-12-12",
+    "time": "TBD",
+    "price": {
+      "min": 444,
+      "max": 3208,
+      "currency": "USD"
+    },
+    "totalTickets": 31,
+    "availableTickets": 4,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/1007-ncaaf-navy-midshipmen/navy-midshipmen-tickets-1.jpg"
+    ]
+  },
+  {
+    "title": "Army Black Knights vs Navy Midshipmen",
+    "description": "Baltimore hosts the iconic Army–Navy game, one of America's most emotional and patriotic sporting traditions.",
+    "category": "sports",
+    "venue": "M&T Bank Stadium",
+    "location": {
+      "city": "Baltimore",
+      "state": "MD",
+      "country": "USA",
+      "address": "1101 Russell St, Baltimore, MD 21230"
+    },
+    "date": "2025-12-13",
+    "time": "3:00 PM",
+    "price": {
+      "min": 478,
+      "max": 2428,
+      "currency": "USD"
+    },
+    "totalTickets": 178,
+    "availableTickets": 10,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/44-ncaaf-army-west-point-black-knights/army-west-point-black-knights-tickets-1.jpg"
+    ]
+  },
+  {
+    "title": "Army Black Knights at UTSA Roadrunners",
+    "description": "A high-intensity NCAA football matchup as Army visits the Alamodome for a battle under the Texas dome.",
+    "category": "sports",
+    "venue": "Alamodome",
+    "location": {
+      "city": "San Antonio",
+      "state": "TX",
+      "country": "USA",
+      "address": "100 Montana St, San Antonio, TX 78203"
+    },
+    "date": "2025-11-28",
+    "time": "TBD",
+    "price": {
+      "min": 16,
+      "max": 168,
+      "currency": "USD"
+    },
+    "totalTickets": 185,
+    "availableTickets": 24,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/44-ncaaf-army-west-point-black-knights/army-west-point-black-knights-tickets-1.jpg"
+    ]
+  },
+  {
+    "title": "2026 Atlanta Braves Spring Training Season",
+    "description": "Catch every inning of Braves Spring Training at CoolToday Park with full-season access.",
+    "category": "sports",
+    "venue": "CoolToday Park",
+    "location": {
+      "city": "Venice",
+      "state": "FL",
+      "country": "USA",
+      "address": "18800 S Tamiami Trail, Venice, FL 34293"
+    },
+    "date": "2026-02-20",
+    "time": "12:55 PM",
+    "price": {
+      "min": 1380,
+      "max": 2400,
+      "currency": "USD"
+    },
+    "totalTickets": 2,
+    "availableTickets": 2,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/category/5-ncaa-football/ncaa-football-big-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "Detroit Pistons at Los Angeles Lakers",
+    "description": "Crypto.com Arena lights up as the Lakers host the Pistons in a fast-paced NBA showdown.",
+    "category": "sports",
+    "venue": "Crypto.com Arena",
+    "location": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "country": "USA",
+      "address": "1111 S Figueroa St, Los Angeles, CA 90015"
+    },
+    "date": "2025-12-30",
+    "time": "7:30 PM",
+    "price": {
+      "min": 95,
+      "max": 1312,
+      "currency": "USD"
+    },
+    "totalTickets": 779,
+    "availableTickets": 60,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/f_auto/hero/event/sports/239-nba-detroit-pistons/detroit-pistons-big-tickets-3.jpg"
+    ]
+  },
+  {
+    "title": "NBA Cup - Lakers at Pelicans",
+    "description": "The Lakers take on the Pelicans in New Orleans for a high-stakes NBA Cup showdown.",
+    "category": "sports",
+    "venue": "Smoothie King Center",
+    "location": {
+      "city": "New Orleans",
+      "state": "LA",
+      "country": "USA",
+      "address": "1501 Dave Dixon Dr, New Orleans, LA 70113"
+    },
+    "date": "2025-10-31",
+    "time": "7:00 PM",
+    "price": {
+      "min": 29,
+      "max": 372,
+      "currency": "USD"
+    },
+    "totalTickets": 417,
+    "availableTickets": 33,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/g_center/hero/event/sports/171-nba-playoffs/nba-finals-big-tickets-3.jpg"
     ]
   }
 ]
