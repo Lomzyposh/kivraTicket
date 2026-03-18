@@ -3,14 +3,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   BarChart3,
   Ticket,
-  Users,
   DollarSign,
   AlertTriangle,
   CalendarDays,
   Activity,
   Bell,
   ArrowRight,
-  Settings,
   Banknote,
   Shirt,
 } from "lucide-react";
@@ -48,9 +46,14 @@ const adminLinks = [
     path: "/admin/events",
   },
   {
-    label: "Add Cloth",
+    label: "Add merch",
     icon: Shirt,
     path: "/admin/merch/new",
+  },
+  {
+    label: "Merch orders",
+    icon: Banknote,
+    path: "/admin/merch-orders",
   },
   {
     label: "Fetch events",
@@ -63,8 +66,8 @@ const adminLinks = [
     path: "/admin/notifications",
   },
   {
-    label: "Payment config",
-    icon: Settings,
+    label: "Bank requests",
+    icon: Banknote,
     path: "/admin/payment-config",
   },
 ];
@@ -85,12 +88,15 @@ export default function AdminDashboard() {
   const [notifLoading, setNotifLoading] = useState(true);
   const [notifError, setNotifError] = useState("");
 
-  const [paymentConfigs, setPaymentConfigs] = useState([]);
+  const [paymentRequestsSummary, setPaymentRequestsSummary] = useState({
+    all: 0,
+    requested: 0,
+    sent: 0,
+  });
   const [paymentLoading, setPaymentLoading] = useState(true);
 
   const [pageError, setPageError] = useState("");
 
-  // Guard: only admins
   useEffect(() => {
     if (!user) {
       navigate("/login", {
@@ -106,7 +112,6 @@ export default function AdminDashboard() {
     }
   }, [user, navigate]);
 
-  // Fetch stats
   useEffect(() => {
     if (!user || user.role !== "admin") return;
 
@@ -138,7 +143,6 @@ export default function AdminDashboard() {
     };
   }, [user]);
 
-  // Fetch pending orders
   useEffect(() => {
     if (!user || user.role !== "admin") return;
     let active = true;
@@ -151,10 +155,9 @@ export default function AdminDashboard() {
         });
         if (!active) return;
         const orders = res.data?.orders || [];
-        setPendingOrders(orders.slice(0, 5)); // show top 5
-      } catch (_) {
+        setPendingOrders(orders.slice(0, 5));
+      } catch {
         if (!active) return;
-        // silently fail, dashboard still usable
       } finally {
         if (active) setPendingLoading(false);
       }
@@ -167,7 +170,6 @@ export default function AdminDashboard() {
     };
   }, [user]);
 
-  // Fetch notifications
   useEffect(() => {
     if (!user || user.role !== "admin") return;
     let active = true;
@@ -198,26 +200,35 @@ export default function AdminDashboard() {
     };
   }, [user]);
 
-  // Fetch payment configs
   useEffect(() => {
     if (!user || user.role !== "admin") return;
     let active = true;
 
-    const fetchPaymentConfigs = async () => {
+    const fetchPaymentRequests = async () => {
       try {
         setPaymentLoading(true);
-        const res = await api.get("/admin/payment-configs");
+        const res = await api.get("/admin/payment-requests");
         if (!active) return;
-        setPaymentConfigs(res.data?.configs || []);
-      } catch (_) {
+        const ticketOrders = res.data?.ticketOrders || [];
+        const merchOrders = res.data?.merchOrders || [];
+        const allOrders = [...ticketOrders, ...merchOrders];
+        setPaymentRequestsSummary({
+          all: allOrders.length,
+          requested: allOrders.filter(
+            (item) => (item.bankPaymentRequest?.status || "requested") === "requested",
+          ).length,
+          sent: allOrders.filter(
+            (item) => item.bankPaymentRequest?.status === "sent",
+          ).length,
+        });
+      } catch {
         if (!active) return;
-        // non-blocking
       } finally {
         if (active) setPaymentLoading(false);
       }
     };
 
-    fetchPaymentConfigs();
+    fetchPaymentRequests();
 
     return () => {
       active = false;
@@ -230,9 +241,9 @@ export default function AdminDashboard() {
     try {
       await api.patch(`/admin/notifications/${id}`);
       setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
       );
-    } catch (_) {
+    } catch {
       setPageError("Failed to update notification. Try again.");
     }
   };
@@ -247,7 +258,6 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       <div className="max-w-6xl mx-auto px-3 xs:px-4 pt-20 pb-16 md:px-8 lg:px-10 lg:pt-24">
-        {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 border border-amber-500/40 px-3 xs:px-4 py-1 text-[10px] xs:text-[11px] uppercase tracking-[0.18em] text-amber-300 shadow-sm backdrop-blur-sm">
@@ -277,7 +287,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Admin navigation */}
         <div className="mb-6 -mx-3 xs:-mx-4 md:mx-0">
           <div className="overflow-x-auto px-3 xs:px-4 md:px-0">
             <div className="inline-flex min-w-max items-center gap-2 rounded-2xl bg-slate-950/80 border border-slate-800 px-2 py-2 shadow-sm backdrop-blur-sm">
@@ -317,9 +326,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Stats cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {/* Total revenue */}
           <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 flex flex-col gap-2 shadow-sm backdrop-blur">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[10px] xs:text-[11px] text-slate-400 uppercase tracking-[0.18em]">
@@ -341,7 +348,6 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* Total orders */}
           <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 flex flex-col gap-2 shadow-sm backdrop-blur">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[10px] xs:text-[11px] text-slate-400 uppercase tracking-[0.18em]">
@@ -359,7 +365,7 @@ export default function AdminDashboard() {
                 <p className="text-[10px] xs:text-[11px] text-slate-500">
                   {formatNumber(stats?.pendingOrders || 0)} pending,{" "}
                   {formatNumber(
-                    (stats?.totalOrders || 0) - (stats?.pendingOrders || 0)
+                    (stats?.totalOrders || 0) - (stats?.pendingOrders || 0),
                   )}{" "}
                   processed.
                 </p>
@@ -367,7 +373,6 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* Users / events */}
           <div className="rounded-2xl bg-slate-900/80 border border-slate-800 p-4 flex flex-col gap-2 shadow-sm backdrop-blur">
             <div className="flex items-center justify-between gap-2">
               <p className="text-[10px] xs:text-[11px] text-slate-400 uppercase tracking-[0.18em]">
@@ -404,9 +409,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Lower grid: pending orders, notifications, payment methods */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.3fr),minmax(0,1fr)] gap-6">
-          {/* Pending orders */}
           <div className="rounded-3xl bg-slate-900/80 border border-slate-800 p-4 xs:p-5 shadow-md backdrop-blur">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
               <div>
@@ -471,8 +474,7 @@ export default function AdminDashboard() {
                         {order.tickets?.length === 1 ? "" : "s"}
                       </p>
                       <p className="text-amber-300">
-                        {order.currency || "USD"}{" "}
-                        {formatNumber(order.totalAmount)}
+                        {order.currency || "USD"} {formatNumber(order.totalAmount)}
                       </p>
                     </div>
                   </button>
@@ -481,9 +483,7 @@ export default function AdminDashboard() {
             )}
           </div>
 
-          {/* Right column: notifications + payment channels */}
           <div className="space-y-4">
-            {/* Notifications */}
             <div className="rounded-3xl bg-slate-900/80 border border-slate-800 p-4 xs:p-5 shadow-md backdrop-blur">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
@@ -548,8 +548,7 @@ export default function AdminDashboard() {
                           {n.message || "Notification"}
                         </p>
                         <p className="text-[9px] xs:text-[10px] text-slate-500 mt-0.5">
-                          {formatShortDate(n.createdAt)} •{" "}
-                          {n.type?.replace("_", " ")}
+                          {formatShortDate(n.createdAt)} • {n.type?.replace("_", " ")}
                         </p>
                       </div>
                       {!n.isRead && (
@@ -567,17 +566,16 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            {/* Payment configs */}
             <div className="rounded-3xl bg-slate-900/80 border border-slate-800 p-4 xs:p-5 shadow-md backdrop-blur">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-sky-400" />
+                  <Banknote className="w-4 h-4 text-sky-400" />
                   <div>
                     <p className="text-[10px] xs:text-[11px] text-slate-400 uppercase tracking-[0.18em]">
-                      Payment channels
+                      Bank transfer requests
                     </p>
                     <p className="text-[11px] xs:text-xs text-slate-300">
-                      Current manual payment configuration.
+                      Per-order bank assignment only.
                     </p>
                   </div>
                 </div>
@@ -586,51 +584,34 @@ export default function AdminDashboard() {
                   onClick={() => navigate("/admin/payment-config")}
                   className="text-[10px] xs:text-[11px] text-amber-300 hover:text-amber-200 flex items-center gap-1 whitespace-nowrap"
                 >
-                  Edit
+                  Open
                   <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
 
               {paymentLoading ? (
                 <div className="space-y-2">
-                  {Array.from({ length: 2 }).map((_, idx) => (
+                  {Array.from({ length: 3 }).map((_, idx) => (
                     <div
                       key={idx}
                       className="h-10 rounded-2xl bg-slate-950/80 border border-slate-800 animate-pulse"
                     />
                   ))}
                 </div>
-              ) : paymentConfigs.length === 0 ? (
-                <p className="text-xs text-slate-400">
-                  No manual payment methods configured yet. Head into Payment
-                  config to add PayPal, CashApp, Zelle, etc.
-                </p>
               ) : (
                 <div className="space-y-2">
-                  {paymentConfigs.map((cfg) => (
-                    <div
-                      key={cfg._id}
-                      className="rounded-2xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-xs flex items-start gap-2"
-                    >
-                      <Banknote className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-slate-100 font-medium capitalize">
-                          {cfg.method}
-                          {!cfg.isActive && (
-                            <span className="ml-1 text-[10px] text-slate-500">
-                              (inactive)
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
-                          {cfg.recipientInfo?.email ||
-                            cfg.recipientInfo?.phone ||
-                            cfg.recipientInfo?.username ||
-                            "No recipient info set"}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="rounded-2xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-xs flex items-center justify-between gap-2">
+                    <span className="text-slate-400">All requests</span>
+                    <span className="text-slate-100 font-medium">{paymentRequestsSummary.all}</span>
+                  </div>
+                  <div className="rounded-2xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-xs flex items-center justify-between gap-2">
+                    <span className="text-slate-400">Awaiting admin</span>
+                    <span className="text-amber-300 font-medium">{paymentRequestsSummary.requested}</span>
+                  </div>
+                  <div className="rounded-2xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-xs flex items-center justify-between gap-2">
+                    <span className="text-slate-400">Assigned / emailed</span>
+                    <span className="text-emerald-300 font-medium">{paymentRequestsSummary.sent}</span>
+                  </div>
                 </div>
               )}
             </div>

@@ -499,7 +499,7 @@
     ],
     "apiSource": "manual"
   },
-  
+
   {
     "title": "Memphis Grizzlies at New York Knicks",
     "description": "The Knicks host the Memphis Grizzlies at the iconic Madison Square Garden in a high-energy NBA showdown filled with fast breaks and fierce rivalries.",
@@ -676,7 +676,7 @@
     ],
     "apiSource": "manual"
   },
-  
+
   {
     "title": "Atlanta Hawks at Oklahoma City Thunder",
     "description": "An exciting NBA clash at Paycom Center as the Atlanta Hawks face off against the Oklahoma City Thunder in a game full of young talent and sharp shooting.",
@@ -896,8 +896,150 @@
       "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1536,h_448/if_else/g_center,q_auto,c_fill,w_1536,h_448/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
     ],
     "apiSource": "manual"
+  },
+
+  {
+    "title": "Ghost Live in Portland",
+    "description": "Ghost brings their theatrical heavy metal spectacle to Moda Center with a night of dark visuals and explosive sound.",
+    "category": "concert",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2026-02-17",
+    "time": "8:00 PM",
+    "price": {
+      "min": 52,
+      "max": 488,
+      "currency": "USD"
+    },
+    "totalTickets": 838,
+    "availableTickets": 132,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_680,h_680/if_else/g_center,q_auto,c_fill,w_680,h_680/if_end/dpr_auto,f_auto/hero/event/concerts/19147-ghost/ghost-tickets-4.jpg"
+    ]
+  },
+  {
+    "title": "Cardi B Live in Portland",
+    "description": "Cardi B shuts down Portland with chart-topping hits, high energy performances, and a packed Moda Center crowd.",
+    "category": "concert",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2026-02-19",
+    "time": "7:30 PM",
+    "price": {
+      "min": 60,
+      "max": 500,
+      "currency": "USD"
+    },
+    "totalTickets": 1143,
+    "availableTickets": 221,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_680,h_680/if_else/g_center,q_auto,c_fill,w_680,h_680/if_end/dpr_auto,f_auto/hero/event/concerts/51285-cardi-b/cardi-b-tickets-8.jpg"
+    ]
+  },
+  {
+    "title": "Ricardo Arjona Live in Portland",
+    "description": "Latin music icon Ricardo Arjona delivers an emotional night of storytelling and classic hits at Moda Center.",
+    "category": "concert",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2026-02-25",
+    "time": "8:00 PM",
+    "price": {
+      "min": 46,
+      "max": 812,
+      "currency": "USD"
+    },
+    "totalTickets": 709,
+    "availableTickets": 87,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_680,h_680/if_else/g_center,q_auto,c_fill,w_680,h_680/if_end/dpr_auto,f_auto/hero/event/concerts/1762-ricardo-arjona/ricardo-arjona-tickets-1.jpg"
+    ]
+  },
+  {
+    "title": "Brandi Carlile Live in Portland",
+    "description": "Brandi Carlile lights up Moda Center with powerful vocals, heartfelt lyrics, and an unforgettable live experience.",
+    "category": "concert",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2026-03-04",
+    "time": "7:00 PM",
+    "price": {
+      "min": 57,
+      "max": 388,
+      "currency": "USD"
+    },
+    "totalTickets": 410,
+    "availableTickets": 84,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_680,h_680/if_else/g_center,q_auto,c_fill,w_680,h_680/if_end/dpr_auto,f_auto/hero/event/concerts/8144-brandi-carlile/brandi-carlile-tickets-6.jpg"
+    ]
+  },
+  {
+    "title": "Lamb of God Live in Portland",
+    "description": "Lamb of God unleashes a ferocious metal performance with crushing riffs and high-intensity energy at Moda Center.",
+    "category": "concert",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2026-03-30",
+    "time": "7:00 PM",
+    "price": {
+      "min": 55,
+      "max": 356,
+      "currency": "USD"
+    },
+    "totalTickets": 476,
+    "availableTickets": 96,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_680,h_680/if_else/g_center,q_auto,c_fill,w_680,h_680/if_end/dpr_auto,f_auto/hero/event/concerts/5986-lamb-of-god/lamb-of-god-tickets-1.jpg"
+    ]
+  },
+  {
+    "title": "John Mulaney Live in Portland",
+    "description": "Comedian John Mulaney brings his sharp wit and storytelling brilliance to Moda Center for a special New Year’s Eve comedy performance.",
+    "category": "comedy",
+    "venue": "Moda Center",
+    "location": {
+      "city": "Portland",
+      "state": "OR",
+      "country": "USA",
+      "address": "1 N Center Ct St, Portland, OR 97227"
+    },
+    "date": "2025-12-31",
+    "time": "8:00 PM",
+    "price": {
+      "min": 56,
+      "max": 460,
+      "currency": "USD"
+    },
+    "totalTickets": 508,
+    "availableTickets": 1074,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/comedy/30852-john-mulaney/john-mulaney-tickets-4.jpg"
+    ]
   }
-
-
-  
 ]

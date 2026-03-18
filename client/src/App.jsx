@@ -43,6 +43,7 @@ import AdminMerch from "./pages/Admin/AdminMerch";
 import Cart from "./pages/Cart";
 import CartCheckout from "./pages/CartCheckout";
 import VerifyPayment from "./pages/VerifyPayment";
+import PaymentPage from "./pages/PaymentPage";
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -100,6 +101,15 @@ function App() {
             <Route path="/checkout-cart" element={<CartCheckout />} />
 
             <Route path="/verify/:orderId" element={<VerifyPayment />} />
+
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route path="/forgot-password" element={<ForgotPassword />} />
 

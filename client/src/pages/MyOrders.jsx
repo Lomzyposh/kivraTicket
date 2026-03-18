@@ -5,7 +5,6 @@ import {
   ShoppingBag,
   QrCode,
   CalendarDays,
-  MapPin,
   Clock,
   AlertTriangle,
   CreditCard,
@@ -33,23 +32,25 @@ function currencySymbol(code) {
   return code === "USD"
     ? "$"
     : code === "NGN"
-    ? "₦"
-    : code === "GBP"
-    ? "£"
-    : code === "EUR"
-    ? "€"
-    : "";
+      ? "₦"
+      : code === "GBP"
+        ? "£"
+        : code === "EUR"
+          ? "€"
+          : "";
 }
 
 function humanPaymentMethod(method) {
-  if (!method) return "Unknown";
+  if (!method || method === "pending_selection") return "Not selected yet";
   switch (method) {
     case "credit_card":
-      return "Credit card";
+      return "Credit / Debit Card";
     case "giftcard":
-      return "Gift card";
+      return "Gift Card";
+    case "bank_transfer":
+      return "Bank Transfer";
     default:
-      return "Bank transfer";
+      return method;
   }
 }
 
@@ -150,8 +151,6 @@ export default function MyOrders() {
     }
   };
 
-  // Refresh + refund + resend logic stays SAME
-  // ---- (keeping your existing UI/functions unchanged)
   const openRefundForm = (orderId, existingReason) => {
     setActiveRefund(orderId);
     setRefundReason(existingReason || "");
@@ -181,10 +180,10 @@ export default function MyOrders() {
 
       setTicketOrders((prev) =>
         prev.map((o) =>
-          o._id === orderId ? { ...o, refundRequested: true, refundReason } : o
-        )
+          o._id === orderId ? { ...o, refundRequested: true, refundReason } : o,
+        ),
       );
-    } catch (err) {
+    } catch {
       setRefundMessage("Unable to request refund now.");
     } finally {
       setRefundLoading(false);
@@ -203,7 +202,7 @@ export default function MyOrders() {
         ...prev,
         [orderId]: { loading: false, message: res.data?.message, error: "" },
       }));
-    } catch (err) {
+    } catch {
       setResendStatus((prev) => ({
         ...prev,
         [orderId]: { loading: false, message: "", error: "Unable to resend." },
@@ -243,7 +242,6 @@ export default function MyOrders() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50">
       <div className="max-w-5xl mx-auto px-4 pt-20 pb-24">
-        {/* HEADER */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <button
@@ -267,8 +265,7 @@ export default function MyOrders() {
             type="button"
             onClick={handleRefresh}
             disabled={loading || refreshing}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900/80
-              hover:border-amber-500/70 hover:bg-slate-900/80 text-[11px] text-slate-200 px-3 py-1.5 transition-all"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-700 bg-slate-900/80 hover:border-amber-500/70 hover:bg-slate-900/80 text-[11px] text-slate-200 px-3 py-1.5 transition-all"
           >
             {refreshing ? (
               <>
@@ -284,7 +281,6 @@ export default function MyOrders() {
           </button>
         </div>
 
-        {/* ERROR */}
         {pageError && (
           <div className="mb-4 rounded-xl bg-red-500/10 border border-red-500/40 px-4 py-3 text-xs text-red-100 flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 mt-0.5" />
@@ -292,7 +288,6 @@ export default function MyOrders() {
           </div>
         )}
 
-        {/* LOADING */}
         {loading && (
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -307,9 +302,6 @@ export default function MyOrders() {
           </div>
         )}
 
-        {/* ================================
-            TICKET ORDERS SECTION
-        ================================= */}
         {!loading && ticketOrders.length > 0 && (
           <div className="mt-10">
             <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -335,10 +327,9 @@ export default function MyOrders() {
                   key={order._id}
                   className="rounded-3xl bg-slate-900/80 border border-slate-800 p-5 mt-4"
                 >
-                  {/* HEADER */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-xs text-slate-400">
-                      Order ID:{" "}
+                      Order ID: {" "}
                       <span className="text-slate-200 font-mono">
                         {order._id}
                       </span>
@@ -354,7 +345,6 @@ export default function MyOrders() {
                     </span>
                   </div>
 
-                  {/* EVENT */}
                   <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3 flex gap-3 mb-4">
                     <div className="h-16 w-16 rounded-xl bg-slate-800 overflow-hidden">
                       {event.images?.[0] ? (
@@ -386,7 +376,6 @@ export default function MyOrders() {
                     </div>
                   </div>
 
-                  {/* DETAILS */}
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3 text-xs space-y-2">
                       <div className="flex justify-between">
@@ -409,11 +398,10 @@ export default function MyOrders() {
                       </div>
                       <div className="flex justify-between">
                         <span>Status</span>
-                        <span>{order.paymentMethod?.status}</span>
+                        <span>{order.paymentMethod?.status || "pending"}</span>
                       </div>
                     </div>
 
-                    {/* QR + resend */}
                     <div className="rounded-2xl bg-slate-950 border border-slate-800 p-3 text-center">
                       {order.qrCodeSent ? (
                         <>
@@ -447,6 +435,19 @@ export default function MyOrders() {
                         {thisResend.loading ? "Sending..." : "Resend email"}
                       </button>
 
+                      {!order.qrCodeSent && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(`/payment?kind=ticket&orderId=${order._id}`)
+                          }
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-200 hover:border-amber-400/80 transition"
+                        >
+                          <Banknote className="w-3.5 h-3.5" />
+                          Open payment page
+                        </button>
+                      )}
+
                       {thisResend.message && (
                         <p className="text-[11px] text-emerald-300 mt-1">
                           {thisResend.message}
@@ -459,15 +460,58 @@ export default function MyOrders() {
                       )}
                     </div>
                   </div>
+
+                  {activeRefund === order._id && (
+                    <div className="mt-4 rounded-2xl bg-slate-950 border border-slate-800 p-4">
+                      <p className="text-xs font-semibold text-slate-100 mb-2">
+                        Refund request
+                      </p>
+                      <textarea
+                        value={refundReason}
+                        onChange={(e) => setRefundReason(e.target.value)}
+                        placeholder="Tell us why you need a refund"
+                        className="w-full min-h-[100px] rounded-xl bg-slate-900 border border-slate-800 px-3 py-2 text-sm text-slate-100"
+                      />
+                      {refundMessage && (
+                        <p className="mt-2 text-xs text-amber-300">
+                          {refundMessage}
+                        </p>
+                      )}
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => submitRefundRequest(order._id)}
+                          disabled={refundLoading}
+                          className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-semibold text-slate-950"
+                        >
+                          {refundLoading ? "Submitting..." : "Submit refund"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={cancelRefundForm}
+                          className="rounded-xl border border-slate-700 px-4 py-2 text-xs text-slate-200"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {!order.refundRequested && ["pending", "confirmed"].includes(order.status) && (
+                    <button
+                      type="button"
+                      onClick={() => openRefundForm(order._id, order.refundReason)}
+                      className="mt-4 text-[11px] text-amber-300 hover:text-amber-200"
+                    >
+                      Request refund
+                    </button>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* ================================
-             MERCH ORDERS SECTION
-        ================================= */}
         {!loading && merchOrders.length > 0 && (
           <div className="mt-14">
             <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -484,7 +528,6 @@ export default function MyOrders() {
                   key={mo._id}
                   className="rounded-3xl bg-slate-900/80 border border-slate-800 p-5 mt-4"
                 >
-                  {/* HEADER */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="text-xs text-slate-400">
                       Order ID:{" "}
@@ -501,7 +544,6 @@ export default function MyOrders() {
                     </span>
                   </div>
 
-                  {/* ITEMS */}
                   <div className="space-y-3">
                     {mo.items.map((it, i) => (
                       <div
@@ -513,6 +555,7 @@ export default function MyOrders() {
                             <img
                               src={it.image}
                               className="h-full w-full object-cover"
+                              alt={it.title}
                             />
                           ) : (
                             <div className="h-full w-full flex items-center justify-center text-[10px] text-slate-500 uppercase">
@@ -578,9 +621,17 @@ export default function MyOrders() {
                         {merchResendStatus[mo._id].error}
                       </p>
                     )}
+
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/payment?kind=merch&orderId=${mo._id}`)}
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 text-[11px] text-amber-200 hover:border-amber-400/80 transition"
+                    >
+                      <Banknote className="w-3.5 h-3.5" />
+                      Open payment page
+                    </button>
                   </div>
 
-                  {/* TOTAL */}
                   <div className="mt-3 rounded-xl bg-slate-950 border border-slate-800 p-3 text-xs flex justify-between">
                     <span className="text-slate-300">Total</span>
                     <span className="text-amber-300 font-semibold">
@@ -589,7 +640,6 @@ export default function MyOrders() {
                     </span>
                   </div>
 
-                  {/* PAYMENT INFO */}
                   <div className="mt-3 text-xs text-slate-300">
                     Payment Method:{" "}
                     <span className="text-slate-100 ml-1">
@@ -611,7 +661,6 @@ export default function MyOrders() {
           </div>
         )}
 
-        {/* EMPTY STATE (no orders at all) */}
         {!loading && ticketOrders.length === 0 && merchOrders.length === 0 && (
           <div className="rounded-3xl bg-slate-900 border border-slate-800 p-6 text-center mt-10">
             <ShoppingBag className="w-6 h-6 text-amber-400 mx-auto mb-2" />
