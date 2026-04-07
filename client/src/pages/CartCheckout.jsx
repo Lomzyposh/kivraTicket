@@ -18,7 +18,7 @@ function currencySymbol(code) {
 
 export default function CartCheckout() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading} = useAuth();
 
   const [cart, setCart] = useState(null);
   const [totals, setTotals] = useState(null);
@@ -45,7 +45,7 @@ export default function CartCheckout() {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !authLoading) {
       navigate("/login", {
         state: {
           from: "/checkout-cart",

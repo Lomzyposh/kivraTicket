@@ -52,7 +52,7 @@ function formatPrice(price = {}) {
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -93,7 +93,7 @@ export default function EventDetails() {
   const handleBook = () => {
     if (!event) return;
 
-    if (!user) {
+    if (!user && !authLoading) {
       navigate("/login", {
         state: {
           from: `/events/${id}`,
