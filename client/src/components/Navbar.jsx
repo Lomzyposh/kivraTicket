@@ -16,7 +16,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -73,7 +73,7 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <div className="hidden md:flex items-center gap-6">
               {/* /merch */}
-               <NavLink to="/merch" active={isActive("/merch")}>
+              <NavLink to="/merch" active={isActive("/merch")}>
                 Merch
               </NavLink>
               <NavLink to="/events" active={isActive("/events")}>
@@ -153,18 +153,20 @@ const Navbar = () => {
               </>
             )}
 
-            {!user && (
-              <Link
-                to="/login"
-                className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400 transition-all shadow-md shadow-amber-500/30"
-              >
-                <User className="w-4 h-4" />
-                <span>Sign in</span>
-              </Link>
-            )}
+            {!user &&
+              (loading ? (
+                <div className="h-9 w-9 animate-pulse rounded-full bg-slate-700/50" />
+              ) : (
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-amber-400 transition-all shadow-md shadow-amber-500/30"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Sign in</span>
+                </Link>
+              ))}
           </div>
 
-          {/* Mobile right side */}
           <div className="flex md:hidden items-center gap-2">
             {user ? (
               <button
@@ -233,7 +235,7 @@ const Navbar = () => {
                 active={isActive("/events")}
                 onClick={() => setMobileMenuOpen(false)}
               />
-               <MobileLink
+              <MobileLink
                 to="/merch"
                 label="Merch ( Clothes & Accessories )"
                 active={isActive("/merch")}
