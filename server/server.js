@@ -56,7 +56,6 @@ const userSchema = new mongoose.Schema({
     {
       type: {
         type: String,
-        enum: ["credit_card", "paypal", "cashapp", "zelle"],
       },
       details: mongoose.Schema.Types.Mixed,
       addedAt: { type: Date, default: Date.now },
@@ -73,7 +72,6 @@ const eventSchema = new mongoose.Schema({
   description: String,
   category: {
     type: String,
-    enum: ["concert", "sports", "theater", "comedy", "other"],
     required: true,
   },
   venue: { type: String, required: true },
@@ -124,12 +122,10 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: {
     type: {
       type: String,
-      enum: ["pending_selection", "credit_card", "giftcard", "bank_transfer"],
       default: "pending_selection",
     },
     status: {
       type: String,
-      enum: ["pending", "processing", "completed", "failed"],
       default: "pending",
     },
   },
@@ -175,7 +171,6 @@ const orderSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ["pending", "confirmed", "cancelled", "refunded", "rejected"],
     default: "pending",
   },
 
@@ -248,7 +243,6 @@ const merchItemSchema = new mongoose.Schema(
     brand: { type: String, trim: true }, // your friend's brand
     category: {
       type: String,
-      enum: ["t-shirt", "hoodie", "cap", "pants", "accessory", "other"],
       default: "other",
     },
     tags: [{ type: String, trim: true }],
