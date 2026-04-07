@@ -53,7 +53,7 @@ export default function CartCheckout() {
         },
       });
     }
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     let active = true;
