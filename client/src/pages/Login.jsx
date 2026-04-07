@@ -31,6 +31,7 @@ export default function Login() {
       await login(form.email, form.password);
       navigate("/"); // Redirect after successful login
     } catch (err) {
+      console.error("Login error:", err);
       const msg =
         err?.response?.data?.error ||
         err?.response?.data?.message ||
@@ -44,7 +45,6 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-5xl grid md:grid-cols-2 gap-10 bg-slate-900/80 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden backdrop-blur">
-
         <div className="hidden md:flex flex-col justify-between bg-linear-to-br from-amber-500/20 via-amber-500/5 to-transparent p-10 border-r border-slate-800">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/70 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-amber-300 border border-amber-500/40 mb-6">
@@ -52,8 +52,7 @@ export default function Login() {
               <span>GoTickets</span>
             </div>
             <h1 className="text-3xl font-semibold leading-tight mb-3">
-              Welcome back to{" "}
-              <span className="text-amber-400">GoTickets</span>.
+              Welcome back to <span className="text-amber-400">GoTickets</span>.
             </h1>
             <p className="text-slate-300 text-sm leading-relaxed">
               Log in to discover live concerts, stadium nights, comedy tours,
@@ -103,8 +102,8 @@ export default function Login() {
           </div>
 
           <p className="text-[11px] text-slate-400 mt-6">
-            By continuing, you agree to GoTickets&apos; terms and understand
-            how we use your data to secure your account.
+            By continuing, you agree to GoTickets&apos; terms and understand how
+            we use your data to secure your account.
           </p>
         </div>
 
@@ -112,8 +111,7 @@ export default function Login() {
         <div className="p-8 md:p-10 flex flex-col justify-center">
           <div className="mb-6 md:mb-8 md:hidden">
             <h1 className="text-2xl font-semibold">
-              Welcome back to{" "}
-              <span className="text-amber-400">GoTickets</span>
+              Welcome back to <span className="text-amber-400">GoTickets</span>
             </h1>
             <p className="text-slate-400 text-sm mt-1">
               Sign in to manage your tickets, wishlist and orders.

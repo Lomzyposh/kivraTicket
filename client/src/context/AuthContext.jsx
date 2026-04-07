@@ -16,15 +16,18 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
 
   const checkAuth = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/auth/me"); // no /api prefix
+      const response = await api.get("/auth/me");
       setUser(response.data.user);
       setError(null);
     } catch (err) {
       setUser(null);
+      localStorage.removeItem("token");
+      setToken(null);
       setError(err?.response?.data?.message || "Not authenticated");
     } finally {
       setLoading(false);
@@ -32,13 +35,22 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (token) {
+      checkAuth();
+    } else {
+      setLoading(false);
+    }
+  }, [token]);
 
   const login = async (email, password) => {
     try {
       const response = await api.post("/auth/login", { email, password });
+      const newToken = response.data.token;
+
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
       setUser(response.data.user);
+
       setError(null);
       return response.data;
     } catch (err) {
@@ -54,6 +66,10 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+      const newToken = response.data.token;
+
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
       setUser(response.data.user);
       setError(null);
       return response.data;
@@ -66,6 +82,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await api.post("/auth/logout");
+      localStorage.removeItem("token");
+      setToken(null);
       setUser(null);
       setError(null);
     } catch (err) {

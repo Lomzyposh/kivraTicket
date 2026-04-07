@@ -2,7 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
@@ -21,11 +20,9 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cookieParser());
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://go-tickets.vercel.app"],
-    credentials: true,
   }),
 );
 
@@ -442,7 +439,7 @@ const transporter = nodemailer.createTransport({
   pool: true,
   maxConnections: 3,
   maxMessages: 100,
-  connectionTimeout: 10000,
+  connectionTimeout: 15000,
   greetingTimeout: 10000,
   socketTimeout: 20000,
 });
@@ -464,8 +461,7 @@ transporter
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    console.log("Cookies on", req.path, req.cookies);
+    const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({ error: "Authentication required" });
@@ -720,14 +716,8 @@ app.post(
         expiresIn: "7d",
       });
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // true on Render
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
       res.json({
+        token,
         user: {
           id: user._id,
           name: user.name,
@@ -768,14 +758,8 @@ app.post(
         expiresIn: "7d",
       });
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // true on Render
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
-
       res.json({
+        token,
         user: {
           id: user._id,
           name: user.name,
@@ -844,7 +828,6 @@ app.post("/api/auth/reset-password", async (req, res) => {
 
 // Logout
 app.post("/api/auth/logout", (req, res) => {
-  res.clearCookie("token");
   res.json({ message: "Logged out successfully" });
 });
 
