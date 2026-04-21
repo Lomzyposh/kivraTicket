@@ -45,17 +45,13 @@ import CartCheckout from "./pages/CartCheckout";
 import VerifyPayment from "./pages/VerifyPayment";
 import PaymentPage from "./pages/PaymentPage";
 
-const ProtectedRoute = ({ children, adminOnly = false }) => {
+const ProtectedRoute = ({ requiredRole, children }) => {
   const { user, loading } = useAuth();
 
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (adminOnly && user.role !== "admin") {
-    return <Navigate to="/" replace />;
-  }
+  if (loading) return <Loader />; // auth still resolving
+  if (!user) return <Navigate to="/login" replace />; // not logged in
+  if (requiredRole && user.role !== requiredRole)
+    return <Navigate to="/" replace />; // wrong role (e.g. not admin)
 
   return children;
 };
@@ -99,14 +95,7 @@ function App() {
 
             <Route path="/verify/:orderId" element={<VerifyPayment />} />
 
-            <Route
-              path="/payment"
-              element={
-                <ProtectedRoute>
-                  <PaymentPage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/payment" element={<PaymentPage />} />
 
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
@@ -119,14 +108,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/checkout"
-              element={
-                <ProtectedRoute>
-                  <Checkout />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/checkout" element={<Checkout />} />
 
             <Route
               path="/my-orders"

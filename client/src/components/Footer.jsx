@@ -79,7 +79,7 @@ export default function Footer() {
                   Events
                 </Link>
               </li>
-               <li>
+               {/* <li>
                 <Link
                   to="/merch"
                   className="hover:text-amber-400 transition-colors"
@@ -102,15 +102,15 @@ export default function Footer() {
                 >
                   My Tickets
                 </Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Link
                   to="/profile"
                   className="hover:text-amber-400 transition-colors"
                 >
                   Profile
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -122,7 +122,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400" />
-                <span>gotickets6@gmail.com</span>
+                <span>cb3161155@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-400" />
@@ -133,15 +133,12 @@ export default function Footer() {
                 <span>Los Angeles, USA</span>
               </li>
             </ul>
-            <p className="text-[11px] mt-4 text-slate-500">
-              Open Monday – Sunday, 9am – 10pm
-            </p>
           </div>
         </div>
 
         {/* Divider */}
         <div className="border-t border-slate-800 mt-10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-xs text-slate-500">
-          <p>© {year} GoTickets. All rights reserved.</p>
+          <p>© {year} KivraTickets. All rights reserved.</p>
           <p className="flex flex-wrap items-center gap-3">
             <Link
               to="/terms"

@@ -268,7 +268,7 @@ export default function AdminDashboard() {
               Oversee tickets, orders and revenue.
             </h1>
             <p className="text-xs md:text-sm text-slate-400 max-w-xl">
-              A quick snapshot of how GoTickets is performing: orders, users,
+              A quick snapshot of how KivraTickets is performing: orders, users,
               events and refund activity in one place.
             </p>
           </div>

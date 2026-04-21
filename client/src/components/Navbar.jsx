@@ -56,7 +56,7 @@ const Navbar = () => {
             {/* Brand Text */}
             <div className="flex flex-col leading-tight">
               <span className="text-lg sm:text-xl font-semibold text-slate-50">
-                Go
+                Kivra
                 <span className="text-amber-400 transition-colors duration-300 group-hover:text-amber-300">
                   Tickets
                 </span>
@@ -73,9 +73,9 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             <div className="hidden md:flex items-center gap-6">
               {/* /merch */}
-              <NavLink to="/merch" active={isActive("/merch")}>
+              {/* <NavLink to="/merch" active={isActive("/merch")}>
                 Merch
-              </NavLink>
+              </NavLink> */}
               <NavLink to="/events" active={isActive("/events")}>
                 Events
               </NavLink>
@@ -153,7 +153,7 @@ const Navbar = () => {
               </>
             )}
 
-            {!user &&
+            {/* {!user &&
               (loading ? (
                 <div className="h-9 w-9 animate-pulse rounded-full bg-slate-700/50" />
               ) : (
@@ -164,7 +164,7 @@ const Navbar = () => {
                   <User className="w-4 h-4" />
                   <span>Sign in</span>
                 </Link>
-              ))}
+              ))} */}
           </div>
 
           <div className="flex md:hidden items-center gap-2">
@@ -182,13 +182,13 @@ const Navbar = () => {
               </button>
             ) : (
               <>
-                <Link
+                {/* <Link
                   to="/login"
                   className="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-semibold text-slate-950 hover:bg-amber-400 transition-all"
                 >
                   <User className="w-4 h-4" />
                   <span>Sign in</span>
-                </Link>
+                </Link> */}
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen((p) => !p)}

@@ -185,7 +185,7 @@ export default function Events() {
             </h1>
             <p className="mt-1 text-xs md:text-sm text-slate-400 max-w-xl">
               Use filters to narrow down by city, category, date and price.
-              Every ticket issued through GoTickets comes with a secure QR code
+              Every ticket issued through KivraTickets comes with a secure QR code
               for entry.
             </p>
           </div>
@@ -452,12 +452,12 @@ export default function Events() {
                       <span className="text-slate-200">
                         {formatPrice(event.price)}
                       </span>
-                      {typeof event.availableTickets === "number" && (
+                      {/* {typeof event.availableTickets === "number" && (
                         <span className="text-slate-400">
                           {event.availableTickets} ticket
                           {event.availableTickets === 1 ? "" : "s"} left
                         </span>
-                      )}
+                      )} */}
                     </div>
                   </button>
                 );

@@ -45,7 +45,7 @@ export default function Profile() {
       navigate("/login", {
         state: {
           from: "/profile",
-          message: "Sign in to manage your GoTickets profile.",
+          message: "Sign in to manage your KivraTickets profile.",
         },
       });
       return;
@@ -218,7 +218,7 @@ export default function Profile() {
               Account settings
             </h1>
             <p className="mt-1 text-xs md:text-sm text-slate-400">
-              Update your details and keep your GoTickets account secure.
+              Update your details and keep your KivraTickets account secure.
             </p>
           </div>
           <button

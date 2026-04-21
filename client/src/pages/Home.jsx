@@ -128,7 +128,7 @@ export default function Home() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/80 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-amber-300 border border-amber-500/40 mb-4">
               <Ticket className="w-3 h-3" />
-              <span>GoTickets</span>
+              <span>KivraTickets</span>
               <span className="w-1 h-1 rounded-full bg-amber-400" />
               <span>Live events, simplified</span>
             </div>
@@ -216,7 +216,7 @@ export default function Home() {
             <div className="relative bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-5 md:p-6 shadow-2xl shadow-black/60">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                 <div>
-                  <p className="text-xs text-slate-400">Tonight on GoTickets</p>
+                  <p className="text-xs text-slate-400">Tonight on KivraTickets</p>
                   <p className="text-sm font-semibold text-slate-100">
                     Live events near you
                   </p>

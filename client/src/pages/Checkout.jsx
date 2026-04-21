@@ -9,6 +9,7 @@ import {
   User,
   Phone,
   MapPin,
+  Mail,
 } from "lucide-react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -49,6 +50,10 @@ export default function Checkout() {
 
   const eventId = searchParams.get("eventId") || "";
   const qtyFromUrl = Number(searchParams.get("qty") || "1");
+
+  const seatsParam = searchParams.get("seats") || "";
+  const ticketsParam = searchParams.get("tickets") || "";
+
   const [qty, setQty] = useState(qtyFromUrl > 0 ? qtyFromUrl : 1);
 
   const [event, setEvent] = useState(null);
@@ -68,6 +73,21 @@ export default function Checkout() {
     zipCode: "",
     country: "",
   });
+
+  const [guestEmail, setGuestEmail] = useState("");
+
+  const selectedSeats = seatsParam ? seatsParam.split(",").filter(Boolean) : [];
+  const gaTickets = (() => {
+    if (!ticketsParam) return [];
+    try {
+      return JSON.parse(ticketsParam);
+    } catch {
+      return [];
+    }
+  })();
+
+  const hasSeatedSelection = selectedSeats.length > 0;
+  const hasGASelection = gaTickets.length > 0;
 
   useEffect(() => {
     if (!eventId) {
@@ -103,21 +123,16 @@ export default function Checkout() {
     };
   }, [eventId]);
 
-  useEffect(() => {
-    if (!user) {
-      navigate("/login", {
-        state: {
-          from: `/checkout?eventId=${eventId}&qty=${qty}`,
-          message: "Sign in to complete your ticket purchase.",
-        },
-      });
-    }
-  }, [user, navigate, eventId, qty]);
+  const pricePerSeatParam = searchParams.get("pricePerSeat");
 
   const basePrice = useMemo(() => {
+    if (pricePerSeatParam) {
+      const parsed = Number(pricePerSeatParam);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
     if (!event?.price) return 0;
     return event.price.min || event.price.max || 0;
-  }, [event]);
+  }, [event, pricePerSeatParam]);
 
   const currency = event?.price?.currency || "USD";
   const symbol = currencySymbol(currency);
@@ -158,11 +173,6 @@ export default function Checkout() {
       return;
     }
 
-    if (!user) {
-      setOrderError("You need to be signed in to place an order.");
-      return;
-    }
-
     if (qty < 1) {
       setOrderError("Please select at least one ticket.");
       return;
@@ -176,16 +186,39 @@ export default function Checkout() {
     try {
       setProcessingOrder(true);
 
-      const tickets = Array.from({ length: qty }).map(() => ({
-        seatNumber: "",
-        price: basePrice,
-        currency,
-      }));
+      const tickets = (() => {
+        if (hasSeatedSelection) {
+          // One ticket object per seat
+          return selectedSeats.map((seatNumber) => ({
+            seatNumber,
+            price: basePrice,
+            currency,
+          }));
+        }
+        if (hasGASelection) {
+          // Expand each ticket type into individual ticket objects
+          return gaTickets.flatMap((t) =>
+            Array.from({ length: t.qty }).map(() => ({
+              seatNumber: t.typeId, // use typeId as the "seat" identifier for GA
+              price: t.price,
+              currency,
+            })),
+          );
+        }
+        // Fallback: plain quantity (no seat data)
+        return Array.from({ length: qty }).map(() => ({
+          seatNumber: "",
+          price: basePrice,
+          currency,
+        }));
+      })();
 
       const res = await api.post("/orders", {
         eventId: event._id,
         tickets,
         deliveryAddress,
+        ...(!user && guestEmail ? { guestEmail } : {}),
+        ...(!user ? { guestName: deliveryAddress.fullName } : {}),
       });
 
       const createdOrderId = res.data?.order?._id;
@@ -343,6 +376,47 @@ export default function Checkout() {
                         +
                       </button>
                     </div>
+                    {hasSeatedSelection && (
+                      <div className="border-t border-slate-800 pt-3 mt-1">
+                        <p className="text-[11px] text-slate-400 mb-1.5 uppercase tracking-[0.14em]">
+                          Selected seats
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {selectedSeats.map((s) => (
+                            <span
+                              key={s}
+                              className="inline-flex items-center rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 px-2 py-0.5 text-[11px] font-mono"
+                            >
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {hasGASelection && (
+                      <div className="border-t border-slate-800 pt-3 mt-1">
+                        <p className="text-[11px] text-slate-400 mb-1.5 uppercase tracking-[0.14em]">
+                          Ticket breakdown
+                        </p>
+                        <div className="flex flex-col gap-1">
+                          {gaTickets.map((t) => (
+                            <div
+                              key={t.typeId}
+                              className="flex items-center justify-between text-xs"
+                            >
+                              <span className="text-slate-300">
+                                {t.label} × {t.qty}
+                              </span>
+                              <span className="text-slate-200 font-medium">
+                                {currencySymbol(currency)}
+                                {(t.price * t.qty).toLocaleString()}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="border-t border-slate-800 pt-3 text-xs space-y-1.5">
@@ -507,6 +581,22 @@ export default function Checkout() {
               </div>
             </div>
 
+            {!user && (
+              <div className="space-y-1">
+                <label className="text-[11px] text-slate-400 flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5" />
+                  Email (optional — for order updates)
+                </label>
+                <input
+                  type="email"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="w-full rounded-xl bg-slate-950/80 border border-slate-800 px-3 py-2 text-sm text-slate-50 placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
+                />
+              </div>
+            )}
+
             <div className="mt-3 pt-3 border-t border-slate-800 flex flex-col gap-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-300">Amount</span>
@@ -523,8 +613,7 @@ export default function Checkout() {
                   processingOrder ||
                   loadingEvent ||
                   !!eventError ||
-                  !event ||
-                  !user
+                  !event
                 }
                 className="mt-1 w-full inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 hover:bg-amber-400 disabled:bg-amber-500/40 text-slate-950 font-semibold text-sm py-3 transition-all shadow-lg shadow-amber-500/30"
               >
@@ -543,7 +632,7 @@ export default function Checkout() {
 
               <p className="text-[10px] text-slate-500 text-center mt-1">
                 By continuing, you agree to the organiser&apos;s event policy
-                and GoTickets&apos; terms for ticket delivery and refunds.
+                and KivraTickets' terms for ticket delivery and refunds.
               </p>
             </div>
           </form>

@@ -44,16 +44,7 @@ export default function CartCheckout() {
     setOrderError("");
   };
 
-  useEffect(() => {
-    if (!user && !authLoading) {
-      navigate("/login", {
-        state: {
-          from: "/checkout-cart",
-          message: "Sign in to complete your merch purchase.",
-        },
-      });
-    }
-  }, [user, authLoading, navigate]);
+
 
   useEffect(() => {
     let active = true;
@@ -96,11 +87,6 @@ export default function CartCheckout() {
     e.preventDefault();
     setOrderError("");
     setOrderSuccess("");
-
-    if (!user) {
-      setOrderError("You must be signed in to place an order.");
-      return;
-    }
 
     if (isEmpty) {
       setOrderError("Your cart is empty.");

@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import SeatPicker from "../components/SeatPicker";
+import SVGSeatPicker from "../components/SVGSeatPicker";
 
 function formatDate(dateString) {
   if (!dateString) return "Date TBA";
@@ -34,12 +36,12 @@ function formatPrice(price = {}) {
     price.currency === "USD"
       ? "$"
       : price.currency === "NGN"
-      ? "₦"
-      : price.currency === "GBP"
-      ? "£"
-      : price.currency === "EUR"
-      ? "€"
-      : "";
+        ? "₦"
+        : price.currency === "GBP"
+          ? "£"
+          : price.currency === "EUR"
+            ? "€"
+            : "";
   if (price.min && price.max && price.min !== price.max) {
     return `${symbol}${price.min.toLocaleString()} – ${symbol}${price.max.toLocaleString()}`;
   }
@@ -47,6 +49,19 @@ function formatPrice(price = {}) {
     return `From ${symbol}${price.min.toLocaleString()}`;
   }
   return "Price TBA";
+}
+
+// ── Determine which picker to show ───────────────────────────────
+// Returns "svg" | "generic" | null
+function pickerType(event) {
+  if (!event) return null;
+  if (event.venueType === "svg-stadium" || event.venueType === "svg-concert") {
+    return "svg";
+  }
+  if (event.seatingLayout?.hasSeats || event.venueType) {
+    return "generic";
+  }
+  return null;
 }
 
 export default function EventDetails() {
@@ -60,6 +75,8 @@ export default function EventDetails() {
   const [error, setError] = useState("");
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [addingWishlist, setAddingWishlist] = useState(false);
+  const [seatSelection, setSeatSelection] = useState(null);
+  const [showSeatPicker, setShowSeatPicker] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -76,7 +93,7 @@ export default function EventDetails() {
         const msg =
           err?.response?.data?.error ||
           err?.response?.data?.message ||
-          "We couldn’t load this event. It may have been removed.";
+          "We couldn't load this event. It may have been removed.";
         setError(msg);
       } finally {
         if (active) setLoading(false);
@@ -92,21 +109,48 @@ export default function EventDetails() {
 
   const handleBook = () => {
     if (!event) return;
-
-    if (!user && !authLoading) {
-      navigate("/login", {
-        state: {
-          from: `/events/${id}`,
-          message: "Sign in to book tickets for this event.",
-        },
-      });
+    if (pickerType(event)) {
+      setShowSeatPicker(true);
       return;
     }
-
-    // Pass data via query params for refresh safety
     const params = new URLSearchParams();
     params.set("eventId", event._id);
     params.set("qty", String(qty));
+    navigate(`/checkout?${params.toString()}`);
+  };
+
+  // ── Unified seat confirm handler ──────────────────────────────
+  // Works for both SVGSeatPicker and legacy SeatPicker payloads
+  const handleSeatConfirm = (selection) => {
+    setSeatSelection(selection);
+    const params = new URLSearchParams();
+    params.set("eventId", event._id);
+
+    if (selection.seats) {
+      params.set("qty", String(selection.qty ?? selection.seats.length));
+      params.set(
+        "seats",
+        Array.isArray(selection.seats)
+          ? selection.seats.join(",")
+          : String(selection.seats),
+      );
+    } else if (selection.tickets) {
+      const totalQty = selection.tickets.reduce((a, t) => a + t.qty, 0);
+      params.set("qty", String(totalQty));
+      params.set("tickets", JSON.stringify(selection.tickets));
+    }
+
+    if (selection.pricePerSeat) {
+      params.set("pricePerSeat", String(selection.pricePerSeat));
+    }
+    if (selection.sectionId) {
+      params.set("section", selection.sectionId);
+    }
+    if (selection.category) {
+      params.set("category", selection.category);
+    }
+
+    setShowSeatPicker(false);
     navigate(`/checkout?${params.toString()}`);
   };
 
@@ -115,7 +159,6 @@ export default function EventDetails() {
       setWishlistMessage("Sign in to save events to your wishlist.");
       return;
     }
-
     try {
       setAddingWishlist(true);
       setWishlistMessage("");
@@ -125,20 +168,22 @@ export default function EventDetails() {
       const msg =
         err?.response?.data?.error ||
         err?.response?.data?.message ||
-        "We couldn’t update your wishlist. Please try again.";
+        "We couldn't update your wishlist. Please try again.";
       setWishlistMessage(msg);
     } finally {
       setAddingWishlist(false);
     }
   };
 
-  const isPastEvent = event?.isPastEvent || (event && new Date(event.date) < new Date());
+  const isPastEvent =
+    event?.isPastEvent || (event && new Date(event.date) < new Date());
   const availableTickets = event?.availableTickets ?? null;
+  const pType = pickerType(event);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50">
       <div className="max-w-5xl mx-auto px-4 pt-20 pb-16 md:px-8 lg:px-10 lg:pt-24">
-        {/* Back / Status bar */}
+        {/* Back bar */}
         <div className="flex items-center justify-between mb-5">
           <button
             type="button"
@@ -148,22 +193,9 @@ export default function EventDetails() {
             <ArrowLeft className="w-3.5 h-3.5" />
             Back
           </button>
-
-          {isPastEvent ? (
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 border border-slate-700 px-3 py-1 text-[11px] text-amber-200">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              Past event
-            </div>
-          ) : availableTickets != null ? (
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 border border-slate-700 px-3 py-1 text-[11px] text-emerald-200">
-              <Ticket className="w-3.5 h-3.5 text-emerald-400" />
-              {availableTickets} ticket
-              {availableTickets === 1 ? "" : "s"} left
-            </div>
-          ) : null}
         </div>
 
-        {/* Loading / error */}
+        {/* Loading */}
         {loading && (
           <div className="rounded-3xl bg-slate-900/80 border border-slate-800 p-6 animate-pulse">
             <div className="h-40 rounded-2xl bg-slate-800 mb-5" />
@@ -173,18 +205,20 @@ export default function EventDetails() {
           </div>
         )}
 
+        {/* Error */}
         {!loading && error && (
           <div className="rounded-3xl bg-red-500/10 border border-red-500/40 p-6 flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-red-300 mt-0.5" />
             <div>
               <h2 className="text-sm font-semibold text-red-100">
-                We couldn’t find this event.
+                We couldn't find this event.
               </h2>
               <p className="text-xs text-red-200 mt-1">{error}</p>
             </div>
           </div>
         )}
 
+        {/* Event card */}
         {!loading && !error && event && (
           <div className="rounded-3xl bg-slate-900/80 border border-slate-800 overflow-hidden shadow-2xl shadow-black/50">
             <div className="relative h-52 md:h-64 w-full bg-slate-800 overflow-hidden">
@@ -233,9 +267,8 @@ export default function EventDetails() {
 
             {/* Content */}
             <div className="p-5 md:p-7 lg:p-8 grid md:grid-cols-[minmax(0,1.4fr),minmax(0,1fr)] gap-8">
-              {/* Left: details */}
+              {/* Left */}
               <div className="space-y-5">
-                {/* Date / time / location */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-3 flex items-start gap-3">
                     <div className="rounded-xl bg-slate-900 p-2">
@@ -286,7 +319,6 @@ export default function EventDetails() {
                   </div>
                 </div>
 
-                {/* Description */}
                 <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
                   <p className="text-[11px] text-slate-400 uppercase tracking-[0.16em] mb-2">
                     About this event
@@ -296,27 +328,6 @@ export default function EventDetails() {
                       "No additional description has been added for this event yet. Your ticket will still include all relevant entry details once your order is confirmed."}
                   </p>
                 </div>
-
-                {/* Seating info */}
-                {event.seatingLayout?.hasSeats && (
-                  <div className="rounded-2xl bg-slate-950/80 border border-slate-800 p-4">
-                    <p className="text-[11px] text-slate-400 uppercase tracking-[0.16em] mb-2">
-                      Seating
-                    </p>
-                    <p className="text-xs text-slate-200">
-                      This event has a seat-based layout with{" "}
-                      <span className="font-semibold">
-                        {event.seatingLayout.rows} rows
-                      </span>{" "}
-                      and{" "}
-                      <span className="font-semibold">
-                        {event.seatingLayout.columns} columns
-                      </span>
-                      . Specific seat selection may be handled at checkout or
-                      assigned automatically depending on the organiser.
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* Right: booking card */}
@@ -326,91 +337,99 @@ export default function EventDetails() {
                     <h2 className="text-sm font-semibold text-slate-100">
                       Book tickets
                     </h2>
-                    {availableTickets != null && (
-                      <p className="text-[11px] text-slate-400">
-                        {availableTickets} ticket
-                        {availableTickets === 1 ? "" : "s"} remaining
-                      </p>
-                    )}
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="space-y-1">
-                      <label className="text-[11px] text-slate-400">
-                        Number of tickets
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setQty((q) => Math.max(1, q - 1))}
-                          className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-lg leading-none hover:border-amber-500/70"
-                        >
-                          –
-                        </button>
-                        <input
-                          type="number"
-                          min={1}
-                          max={availableTickets || undefined}
-                          value={qty}
-                          onChange={(e) => {
-                            const val = Number(e.target.value || 1);
-                            if (availableTickets) {
-                              setQty(
-                                Math.min(
-                                  Math.max(1, val),
-                                  Number(availableTickets)
-                                )
-                              );
-                            } else {
-                              setQty(Math.max(1, val));
+                  {/* Only show qty picker for non-SVG events */}
+                  {pType !== "svg" && (
+                    <div className="space-y-3">
+                      <div className="space-y-1">
+                        <label className="text-[11px] text-slate-400">
+                          Number of tickets
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setQty((q) => Math.max(1, q - 1))}
+                            className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-lg leading-none hover:border-amber-500/70"
+                          >
+                            –
+                          </button>
+                          <input
+                            type="number"
+                            min={1}
+                            max={availableTickets || undefined}
+                            value={qty}
+                            onChange={(e) => {
+                              const val = Number(e.target.value || 1);
+                              if (availableTickets) {
+                                setQty(
+                                  Math.min(
+                                    Math.max(1, val),
+                                    Number(availableTickets),
+                                  ),
+                                );
+                              } else {
+                                setQty(Math.max(1, val));
+                              }
+                            }}
+                            className="w-16 text-center rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setQty((q) =>
+                                availableTickets
+                                  ? Math.min(q + 1, availableTickets)
+                                  : q + 1,
+                              )
                             }
-                          }}
-                          className="w-16 text-center rounded-xl bg-slate-900 border border-slate-700 text-sm text-slate-50 focus:outline-none focus:ring-1 focus:ring-amber-500/70 focus:border-amber-500/70"
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setQty((q) =>
-                              availableTickets
-                                ? Math.min(q + 1, availableTickets)
-                                : q + 1
-                            )
-                          }
-                          className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-lg leading-none hover:border-amber-500/70"
-                        >
-                          +
-                        </button>
+                            className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-lg leading-none hover:border-amber-500/70"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="rounded-xl bg-slate-900 border border-slate-800 p-3 text-xs flex justify-between items-center">
-                      <div>
-                        <p className="text-slate-400">Estimated total</p>
-                        <p className="text-sm font-semibold text-amber-300">
-                          {(() => {
-                            const base =
-                              event.price?.min ||
-                              event.price?.max ||
-                              0;
-                            const currency = event.price?.currency || "USD";
-                            const symbol =
-                              currency === "USD"
-                                ? "$"
-                                : currency === "NGN"
-                                ? "₦"
-                                : currency === "GBP"
-                                ? "£"
-                                : currency === "EUR"
-                                ? "€"
-                                : "";
-                            const total = base * qty;
-                            if (!base) return "To be confirmed at checkout";
-                            return `${symbol}${total.toLocaleString()} (${qty} × ${symbol}${base.toLocaleString()})`;
-                          })()}
-                        </p>
+                      <div className="rounded-xl bg-slate-900 border border-slate-800 p-3 text-xs flex justify-between items-center">
+                        <div>
+                          <p className="text-slate-400">Estimated total</p>
+                          <p className="text-sm font-semibold text-amber-300">
+                            {(() => {
+                              const base =
+                                event.price?.min || event.price?.max || 0;
+                              const curr = event.price?.currency || "USD";
+                              const sym =
+                                curr === "USD"
+                                  ? "$"
+                                  : curr === "NGN"
+                                    ? "₦"
+                                    : curr === "GBP"
+                                      ? "£"
+                                      : curr === "EUR"
+                                        ? "€"
+                                        : "";
+                              const total = base * qty;
+                              if (!base) return "To be confirmed at checkout";
+                              return `${sym}${total.toLocaleString()} (${qty} × ${sym}${base.toLocaleString()})`;
+                            })()}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* SVG event — show seat map hint */}
+                  {pType === "svg" && (
+                    <div className="rounded-xl bg-slate-900 border border-slate-800 p-3 mb-3">
+                      <p className="text-[11px] text-slate-400">
+                        Select your section on the interactive stadium map.
+                        Prices vary by section.
+                      </p>
+                      <p className="text-xs text-amber-300 mt-1 font-medium">
+                        {formatPrice(event.price)}
+                      </p>
+                    </div>
+                  )}
 
                   <button
                     type="button"
@@ -422,20 +441,22 @@ export default function EventDetails() {
                     {isPastEvent
                       ? "Event has ended"
                       : availableTickets === 0
-                      ? "Sold out"
-                      : "Continue to checkout"}
+                        ? "Sold out"
+                        : pType
+                          ? "Choose seats"
+                          : "Continue to checkout"}
                   </button>
 
-                  {!user && !isPastEvent && (
+                  {/* {!user && !isPastEvent && (
                     <p className="mt-2 text-[11px] text-slate-400">
-                      You&apos;ll need to sign in or create an account to
-                      complete your booking.
+                      You'll need to sign in or create an account to complete
+                      your booking.
                     </p>
-                  )}
+                  )} */}
                 </div>
 
                 {/* Wishlist */}
-                <div className="rounded-2xl bg-slate-950/90 border border-slate-800 p-4">
+                {/* <div className="rounded-2xl bg-slate-950/90 border border-slate-800 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-medium text-slate-100">
@@ -443,7 +464,7 @@ export default function EventDetails() {
                       </p>
                       <p className="text-xs text-slate-400 mt-1">
                         Add this event to your wishlist so you can find it
-                        quickly when you&apos;re ready to book.
+                        quickly when you're ready to book.
                       </p>
                     </div>
                     <button
@@ -460,18 +481,46 @@ export default function EventDetails() {
                       {wishlistMessage}
                     </p>
                   )}
-                </div>
+                </div> */}
 
                 <p className="text-[11px] text-slate-500">
-                  Once your payment is confirmed, GoTickets will email your QR
-                  ticket(s) along with a full breakdown of your order and
-                  entry instructions.
+                  Once your payment is confirmed, KivraTickets will email your QR
+                  ticket(s) along with a full breakdown of your order and entry
+                  instructions.
                 </p>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* ── SVG Seat Picker modal ── */}
+      {showSeatPicker && event && pType === "svg" && (
+        <SVGSeatPicker
+          event={event}
+          onConfirm={handleSeatConfirm}
+          onClose={() => setShowSeatPicker(false)}
+        />
+      )}
+
+      {/* ── Legacy Seat Picker modal ── */}
+      {showSeatPicker && event && pType === "generic" && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-start justify-center overflow-y-auto p-4 pt-20">
+          <div className="w-full max-w-4xl">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-xs text-slate-400">Select your seats</p>
+              <button
+                type="button"
+                onClick={() => setShowSeatPicker(false)}
+                className="text-xs text-slate-400 hover:text-slate-100 border border-slate-700 rounded-lg px-3 py-1"
+              >
+                Close
+              </button>
+            </div>
+            <SeatPicker event={event} onConfirm={handleSeatConfirm} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

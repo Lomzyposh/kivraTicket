@@ -47,7 +47,7 @@ export default function Signup() {
     try {
       setSubmitting(true);
       setError("");
-      setHint("Creating your GoTickets profile...");
+      setHint("Creating your KivraTickets profile...");
       await register(form.name, form.email, form.password);
       navigate("/"); // or navigate("/events")
     } catch (err) {
@@ -72,11 +72,11 @@ export default function Signup() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/70 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-amber-300 border border-amber-500/40 mb-6">
               <Ticket className="w-3 h-3" />
-              <span>GoTickets</span>
+              <span>KivraTickets</span>
             </div>
             <h1 className="text-3xl font-semibold leading-tight mb-3">
               Create your{" "}
-              <span className="text-amber-400">GoTickets</span> account.
+              <span className="text-amber-400">KivraTickets</span> account.
             </h1>
             <p className="text-slate-300 text-sm leading-relaxed">
               Build your event life in one place. Save your favorite shows,
@@ -135,7 +135,7 @@ export default function Signup() {
         <div className="p-8 md:p-10 flex flex-col justify-center">
           <div className="mb-6 md:mb-8 md:hidden">
             <h1 className="text-2xl font-semibold">
-              Join <span className="text-amber-400">GoTickets</span>
+              Join <span className="text-amber-400">KivraTickets</span>
             </h1>
             <p className="text-slate-400 text-sm mt-1">
               Create an account to save events, manage tickets and check out

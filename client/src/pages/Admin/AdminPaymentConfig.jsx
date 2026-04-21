@@ -475,7 +475,7 @@ export default function AdminPaymentConfig() {
                         <input
                           value={option.recipientName}
                           onChange={(e) => updateOption(index, "recipientName", e.target.value)}
-                          placeholder="Name e.g. GoTickets / John Doe"
+                          placeholder="Name e.g. KivraTickets / John Doe"
                           className="w-full rounded-2xl border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-slate-50"
                         />
 

@@ -219,7 +219,7 @@ export default function AdminFetchEvents() {
               </p>
               <p className="text-xs text-slate-300">
                 Describe the kind of events you want fetched, choose the data
-                source, set a limit, and GoTickets will do the rest.
+                source, set a limit, and KivraTickets will do the rest.
               </p>
             </div>
             <Download className="w-4 h-4 text-sky-400" />

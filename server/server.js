@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://go-tickets.vercel.app"],
+    origin: ["http://localhost:5173", "https://gotickets.vercel.app"],
   }),
 );
 
@@ -75,6 +75,10 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
   venue: { type: String, required: true },
+  venueType: {
+    type: String,
+    default: null,
+  },
   location: {
     city: String,
     state: String,
@@ -99,13 +103,26 @@ const eventSchema = new mongoose.Schema({
   images: [String],
   apiSource: String, // 'seatgeek', 'manual', etc.
   externalId: String,
+  ticketTypes: [
+    {
+      id: { type: String, required: true }, // e.g. "vip", "standard"
+      label: { type: String, required: true }, // e.g. "VIP Floor"
+      price: { type: Number, required: true },
+      available: { type: Number, default: 0 },
+      currency: { type: String, default: "USD" },
+    },
+  ],
   isPastEvent: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   createdAt: { type: Date, default: Date.now },
 });
 
 const orderSchema = new mongoose.Schema({
+  // user is stored but guests get a dummy ObjectId; identify guest orders by _id
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  isGuest: { type: Boolean, default: false },
+  guestEmail: { type: String, default: null },
+  guestName: { type: String, default: null },
   event: { type: mongoose.Schema.Types.ObjectId, ref: "Event", required: true },
 
   tickets: [
@@ -424,8 +441,8 @@ const MerchOrder = mongoose.model("MerchOrder", merchOrderSchema);
 
 const transporter = nodemailer.createTransport({
   host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false, // STARTTLS
+  port: 465,
+  secure: true, // STARTTLS
   auth: {
     user: process.env.BREVO_SMTP_USER, // Brevo SMTP login
     pass: process.env.BREVO_SMTP_KEY, // Brevo SMTP key
@@ -433,21 +450,23 @@ const transporter = nodemailer.createTransport({
   pool: true,
   maxConnections: 3,
   maxMessages: 100,
-  connectionTimeout: 15000,
-  greetingTimeout: 10000,
-  socketTimeout: 20000,
+  connectionTimeout: 30000,
+  greetingTimeout: 15000,
+  socketTimeout: 30000,
 });
 
 // Verify transporter connection early so startup logs any immediate SMTP problems
-transporter
-  .verify()
-  .then(() => console.log("✅ SMTP transporter verified"))
-  .catch((err) =>
-    console.warn(
-      "⚠️ SMTP transporter verification failed:",
-      err && err.message ? err.message : err,
-    ),
-  );
+setTimeout(() => {
+  transporter
+    .verify()
+    .then(() => console.log("✅ SMTP transporter verified"))
+    .catch((err) =>
+      console.warn(
+        "⚠️ SMTP transporter verification failed:",
+        err?.message || err,
+      ),
+    );
+}, 5000);
 
 // ============================================
 // AUTHENTICATION MIDDLEWARE
@@ -474,6 +493,20 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
+// Optional auth — attaches req.user if token is present, but never blocks
+const optionalAuthMiddleware = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (token) {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = await User.findById(decoded.userId).select("-password");
+    }
+  } catch (_) {
+    // ignore bad/missing token — guest access is fine
+  }
+  next();
+};
+
 const adminMiddleware = (req, res, next) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ error: "Admin access required" });
@@ -494,34 +527,34 @@ const generateQRCode = async (data) => {
   }
 };
 
-const sendEmail = async (to, subject, html) => {
+const sendEmail = async (to, subject, html, retries = 2) => {
   const fromEmail = process.env.MAIL_FROM_EMAIL || process.env.BREVO_FROM_EMAIL;
-  const fromName = process.env.MAIL_FROM_NAME || "GoTickets";
+  const fromName = process.env.MAIL_FROM_NAME || "KivraTickets";
 
   if (!fromEmail) {
     console.error("❌ Missing MAIL_FROM_EMAIL / BREVO_FROM_EMAIL");
     return false;
   }
 
-  try {
-    const info = await transporter.sendMail({
-      from: `"${fromName}" <${fromEmail}>`,
-      to,
-      subject,
-      html,
-    });
-
-    console.log("✅ Email sent via Brevo SMTP", {
-      to,
-      subject,
-      messageId: info.messageId,
-      response: info.response,
-    });
-
-    return true;
-  } catch (error) {
-    console.error("❌ Brevo SMTP send error:", error);
-    return false;
+  for (let attempt = 1; attempt <= retries + 1; attempt++) {
+    try {
+      const info = await transporter.sendMail({
+        from: `"${fromName}" <${fromEmail}>`,
+        to,
+        subject,
+        html,
+      });
+      console.log("✅ Email sent via Brevo SMTP", { to, subject });
+      return info;
+    } catch (err) {
+      console.warn(`⚠️ Email attempt ${attempt} failed:`, err?.message);
+      if (attempt <= retries) {
+        await new Promise((r) => setTimeout(r, 2000 * attempt));
+      } else {
+        console.error("❌ All email attempts failed for:", to);
+        return false;
+      }
+    }
   }
 };
 
@@ -559,7 +592,7 @@ const getOrderModelByKind = (kind = "ticket") => {
 };
 
 const getPaymentPageUrl = (orderId, kind = "ticket") => {
-  const clientUrl = process.env.CLIENT_URL || "https://go-tickets.vercel.app";
+  const clientUrl = process.env.CLIENT_URL || "https://kivratickets.vercel.app";
   return `${clientUrl}/payment?kind=${kind}&orderId=${orderId}`;
 };
 
@@ -784,7 +817,7 @@ app.post("/api/auth/forgot-password", async (req, res) => {
 
     await sendEmail(
       email,
-      "Password Reset Code - GoTickets",
+      "Password Reset Code - KivraTickets",
       `<h2>Password Reset</h2><p>Your reset code is: <strong>${resetCode}</strong></p><p>This code expires in 1 hour.</p>`,
     );
 
@@ -969,9 +1002,10 @@ app.get("/api/wishlist", authMiddleware, async (req, res) => {
   }
 });
 
-app.post("/api/orders", authMiddleware, async (req, res) => {
+app.post("/api/orders", optionalAuthMiddleware, async (req, res) => {
   try {
-    const { eventId, tickets, deliveryAddress } = req.body;
+    const { eventId, tickets, deliveryAddress, guestEmail, guestName } =
+      req.body;
 
     if (!eventId) {
       return res.status(400).json({ error: "eventId is required" });
@@ -1034,8 +1068,18 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
       0,
     );
 
+    // Support guest checkout: user may or may not be logged in
+    const orderUserId = req.user?._id || null;
+    const guestContactName = guestName || deliveryAddress.fullName || "Guest";
+    const guestContactEmail = guestEmail || null;
+
     const order = new Order({
-      user: req.user._id,
+      // For guests, generate a dummy ObjectId so the required field is satisfied.
+      // Guests identify their order by orderId (no user account needed).
+      user: orderUserId || new mongoose.Types.ObjectId(),
+      isGuest: !orderUserId,
+      guestEmail: guestContactEmail,
+      guestName: guestContactName,
       event: eventId,
       tickets: normalizedTickets,
       totalAmount,
@@ -1063,195 +1107,199 @@ app.post("/api/orders", authMiddleware, async (req, res) => {
     event.availableTickets -= normalizedTickets.length;
     await event.save();
 
-    // Notify admin
-    await Notification.create({
-      type: "order_placed",
-      user: req.user._id,
-      order: order._id,
-      message: `New order placed by ${req.user.name} for ${event.title}`,
-    });
+    // Notify admin (non-fatal for guests)
+    try {
+      await Notification.create({
+        type: "order_placed",
+        user: orderUserId || order._id,
+        order: order._id,
+        message: `New order placed by ${guestContactName} for ${event.title}${!orderUserId ? " (guest)" : ""}`,
+      });
+    } catch (_) {
+      /* non-fatal */
+    }
 
     const paymentPageUrl = `${process.env.CLIENT_URL}/payment?kind=ticket&orderId=${order._id}`;
     const eventImageUrl = event.images?.[0];
 
-    await sendEmail(
-      req.user.email,
-      "Order Confirmation - GoTickets",
-      `
-      <div style="
-        background-color: #020617;
-        padding: 24px;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        color: #e5e7eb;
-      ">
-        <div style="
-          max-width: 640px;
-          margin: 0 auto;
-          background-color: #020617;
-          border-radius: 16px;
-          border: 1px solid #1f2937;
-          padding: 20px 22px;
-        ">
-          <h2 style="
-            margin: 0 0 12px;
-            font-size: 22px;
-            color: #fbbf24;
-          ">
-            Thank you for your order! 🎟️
-          </h2>
+    // await sendEmail(
+    //   req.user.email,
+    //   "Order Confirmation - KivraTickets",
+    //   `
+    //   <div style="
+    //     background-color: #020617;
+    //     padding: 24px;
+    //     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    //     color: #e5e7eb;
+    //   ">
+    //     <div style="
+    //       max-width: 640px;
+    //       margin: 0 auto;
+    //       background-color: #020617;
+    //       border-radius: 16px;
+    //       border: 1px solid #1f2937;
+    //       padding: 20px 22px;
+    //     ">
+    //       <h2 style="
+    //         margin: 0 0 12px;
+    //         font-size: 22px;
+    //         color: #fbbf24;
+    //       ">
+    //         Thank you for your order! 🎟️
+    //       </h2>
 
-          <p style="
-            margin: 0 0 16px;
-            font-size: 14px;
-            line-height: 1.6;
-          ">
-            Your order has been created successfully. No payment method was selected during checkout.
-            Please continue on your payment page to complete payment by card, gift card, or bank transfer request.
-          </p>
+    //       <p style="
+    //         margin: 0 0 16px;
+    //         font-size: 14px;
+    //         line-height: 1.6;
+    //       ">
+    //         Your order has been created successfully. No payment method was selected during checkout.
+    //         Please continue on your payment page to complete payment by card, gift card, or bank transfer request.
+    //       </p>
 
-          ${
-            eventImageUrl
-              ? `
-            <div style="
-              margin: 10px 0 18px;
-              border-radius: 12px;
-              overflow: hidden;
-              border: 1px solid #1f2937;
-            ">
-              <img
-                src="${eventImageUrl}"
-                alt="${event.title}"
-                style="display: block; width: 100%; max-height: 260px; object-fit: cover;"
-              />
-            </div>
-          `
-              : ""
-          }
+    //       ${
+    //         eventImageUrl
+    //           ? `
+    //         <div style="
+    //           margin: 10px 0 18px;
+    //           border-radius: 12px;
+    //           overflow: hidden;
+    //           border: 1px solid #1f2937;
+    //         ">
+    //           <img
+    //             src="${eventImageUrl}"
+    //             alt="${event.title}"
+    //             style="display: block; width: 100%; max-height: 260px; object-fit: cover;"
+    //           />
+    //         </div>
+    //       `
+    //           : ""
+    //       }
 
-          <div style="
-            margin: 0 0 18px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            background-color: #030712;
-            border: 1px solid #1f2937;
-          ">
-            <p style="
-              margin: 0 0 4px;
-              font-size: 13px;
-              color: #9ca3af;
-            ">
-              Order summary
-            </p>
-            <p style="margin: 0; font-size: 14px;">
-              <strong>Event:</strong> ${event.title}
-            </p>
-            <p style="margin: 4px 0; font-size: 14px;">
-              <strong>Order ID:</strong> ${order._id}
-            </p>
-            <p style="margin: 4px 0 0; font-size: 14px;">
-              <strong>Total:</strong> ${order.currency} ${String(totalAmount)}
-            </p>
-          </div>
+    //       <div style="
+    //         margin: 0 0 18px;
+    //         padding: 14px 16px;
+    //         border-radius: 12px;
+    //         background-color: #030712;
+    //         border: 1px solid #1f2937;
+    //       ">
+    //         <p style="
+    //           margin: 0 0 4px;
+    //           font-size: 13px;
+    //           color: #9ca3af;
+    //         ">
+    //           Order summary
+    //         </p>
+    //         <p style="margin: 0; font-size: 14px;">
+    //           <strong>Event:</strong> ${event.title}
+    //         </p>
+    //         <p style="margin: 4px 0; font-size: 14px;">
+    //           <strong>Order ID:</strong> ${order._id}
+    //         </p>
+    //         <p style="margin: 4px 0 0; font-size: 14px;">
+    //           <strong>Total:</strong> ${order.currency} ${String(totalAmount)}
+    //         </p>
+    //       </div>
 
-          <div style="
-            margin: 18px 0;
-            padding: 14px 16px;
-            border-radius: 12px;
-            background-color: #111827;
-            border: 1px solid #1f2937;
-          ">
-            <p style="
-              margin: 0 0 6px;
-              font-size: 14px;
-              font-weight: 600;
-              color: #fbbf24;
-            ">
-              Payment instructions
-            </p>
+    //       <div style="
+    //         margin: 18px 0;
+    //         padding: 14px 16px;
+    //         border-radius: 12px;
+    //         background-color: #111827;
+    //         border: 1px solid #1f2937;
+    //       ">
+    //         <p style="
+    //           margin: 0 0 6px;
+    //           font-size: 14px;
+    //           font-weight: 600;
+    //           color: #fbbf24;
+    //         ">
+    //           Payment instructions
+    //         </p>
 
-            <p style="
-              margin: 0 0 10px;
-              font-size: 13px;
-              color: #d1d5db;
-              line-height: 1.6;
-            ">
-              Open your payment page to continue. If you request bank transfer, admin will send the bank details for this specific order.
-            </p>
+    //         <p style="
+    //           margin: 0 0 10px;
+    //           font-size: 13px;
+    //           color: #d1d5db;
+    //           line-height: 1.6;
+    //         ">
+    //           Open your payment page to continue. If you request bank transfer, admin will send the bank details for this specific order.
+    //         </p>
 
-            <a
-              href="${paymentPageUrl}"
-              style="
-                display: inline-block;
-                margin-top: 4px;
-                padding: 10px 14px;
-                font-size: 13px;
-                font-weight: 600;
-                background-color: #f59e0b;
-                color: #111827;
-                border-radius: 8px;
-                text-decoration: none;
-              "
-            >
-              Open Payment Page
-            </a>
-          </div>
+    //         <a
+    //           href="${paymentPageUrl}"
+    //           style="
+    //             display: inline-block;
+    //             margin-top: 4px;
+    //             padding: 10px 14px;
+    //             font-size: 13px;
+    //             font-weight: 600;
+    //             background-color: #f59e0b;
+    //             color: #111827;
+    //             border-radius: 8px;
+    //             text-decoration: none;
+    //           "
+    //         >
+    //           Open Payment Page
+    //         </a>
+    //       </div>
 
-          <p style="
-            margin: 0 0 12px;
-            font-size: 14px;
-            line-height: 1.6;
-          ">
-            You will receive your QR code <strong>once your payment is confirmed</strong>.
-            You’ll also be able to find your tickets anytime under <strong>My Orders</strong>.
-          </p>
+    //       <p style="
+    //         margin: 0 0 12px;
+    //         font-size: 14px;
+    //         line-height: 1.6;
+    //       ">
+    //         You will receive your QR code <strong>once your payment is confirmed</strong>.
+    //         You’ll also be able to find your tickets anytime under <strong>My Orders</strong>.
+    //       </p>
 
-          <div style="
-            margin: 16px 0 0;
-            padding: 12px 14px;
-            border-radius: 10px;
-            background-color: #111827;
-            border: 1px solid #b91c1c;
-          ">
-            <p style="
-              margin: 0 0 4px;
-              font-size: 13px;
-              font-weight: 600;
-              color: #fca5a5;
-            ">
-              Important · Beware of scams
-            </p>
-            <ul style="
-              margin: 4px 0 0;
-              padding-left: 18px;
-              font-size: 12px;
-              color: #e5e7eb;
-              line-height: 1.5;
-            ">
-              <li>Only use payment details shown on your GoTickets payment page or official email.</li>
-              <li>We will never ask you to pay to a random personal account.</li>
-              <li>Do not share your QR code or order details publicly.</li>
-            </ul>
-          </div>
+    //       <div style="
+    //         margin: 16px 0 0;
+    //         padding: 12px 14px;
+    //         border-radius: 10px;
+    //         background-color: #111827;
+    //         border: 1px solid #b91c1c;
+    //       ">
+    //         <p style="
+    //           margin: 0 0 4px;
+    //           font-size: 13px;
+    //           font-weight: 600;
+    //           color: #fca5a5;
+    //         ">
+    //           Important · Beware of scams
+    //         </p>
+    //         <ul style="
+    //           margin: 4px 0 0;
+    //           padding-left: 18px;
+    //           font-size: 12px;
+    //           color: #e5e7eb;
+    //           line-height: 1.5;
+    //         ">
+    //           <li>Only use payment details shown on your KivraTickets payment page or official email.</li>
+    //           <li>We will never ask you to pay to a random personal account.</li>
+    //           <li>Do not share your QR code or order details publicly.</li>
+    //         </ul>
+    //       </div>
 
-          <p style="
-            margin: 18px 0 0;
-            font-size: 12px;
-            color: #6b7280;
-          ">
-            If you didn’t make this order, please contact our support team immediately.
-          </p>
+    //       <p style="
+    //         margin: 18px 0 0;
+    //         font-size: 12px;
+    //         color: #6b7280;
+    //       ">
+    //         If you didn’t make this order, please contact our support team immediately.
+    //       </p>
 
-          <p style="
-            margin: 4px 0 0;
-            font-size: 12px;
-            color: #4b5563;
-          ">
-            — The GoTickets team
-          </p>
-        </div>
-      </div>
-      `,
-    );
+    //       <p style="
+    //         margin: 4px 0 0;
+    //         font-size: 12px;
+    //         color: #4b5563;
+    //       ">
+    //         — The KivraTickets team
+    //       </p>
+    //     </div>
+    //   </div>
+    //   `,
+    // );
 
     res.json({
       order,
@@ -1339,7 +1387,7 @@ app.get("/api/orders/my-all-orders", authMiddleware, async (req, res) => {
  */
 app.post(
   "/api/orders/:orderId/resend-email",
-  authMiddleware,
+  optionalAuthMiddleware,
   async (req, res) => {
     try {
       const order = await Order.findById(req.params.orderId)
@@ -1379,7 +1427,7 @@ app.post(
 
         ok = await sendEmail(
           user.email,
-          "Your GoTickets QR Code (Resent)",
+          "Your KivraTickets QR Code (Resent)",
           `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #D97706;">🔁 Your Tickets Again</h1>
             <p>Hi ${user.name},</p>
@@ -1423,7 +1471,7 @@ app.post(
 
         ok = await sendEmail(
           user.email,
-          "Order Details - GoTickets (Resent)",
+          "Order Details - KivraTickets (Resent)",
           `
   <div style="
     background-color: #020617;
@@ -1545,7 +1593,7 @@ app.post(
 
 app.post(
   "/api/merch-orders/:orderId/resend-email",
-  authMiddleware,
+  optionalAuthMiddleware,
   async (req, res) => {
     try {
       const { orderId } = req.params;
@@ -1563,7 +1611,7 @@ app.post(
 
       await sendEmail(
         req.user.email,
-        "🛍️ Your Merch Order Details - GoTickets",
+        "🛍️ Your Merch Order Details - KivraTickets",
         html,
       );
 
@@ -1698,7 +1746,7 @@ app.post(
 
       await sendEmail(
         order.user.email,
-        "Your GoTickets QR Code",
+        "Your KivraTickets QR Code",
         `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
         <h1 style="color: #D97706;">🎉 Your Tickets Are Ready!</h1>
         <p>Hi ${order.user.name},</p>
@@ -1762,26 +1810,46 @@ app.post(
   adminMiddleware,
   async (req, res) => {
     try {
-      const eventData = {
-        ...req.body,
+      const {
+        title,
+        description,
+        category,
+        venue,
+        location,
+        date,
+        time,
+        price,
+        seatingLayout,
+        totalTickets,
+        availableTickets,
+        images,
+        // NEW fields:
+        venueType,
+        ticketTypes,
+      } = req.body;
+
+      const event = new Event({
+        title,
+        description,
+        category,
+        venue,
+        location,
+        date,
+        time,
+        price,
+        seatingLayout,
+        totalTickets,
+        availableTickets,
+        images,
+        venueType: venueType || null,
+        ticketTypes: ticketTypes || [],
         createdBy: req.user._id,
-      };
+      });
 
-      // Initialize seat map if has seats
-      if (eventData.seatingLayout?.hasSeats) {
-        const rows = eventData.seatingLayout.rows;
-        const cols = eventData.seatingLayout.columns;
-        eventData.seatingLayout.seatMap = Array(rows)
-          .fill(null)
-          .map(() => Array(cols).fill("available"));
-      }
-
-      const event = new Event(eventData);
       await event.save();
-
-      res.json({ message: "Event created successfully", event });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(201).json({ message: "Event created", event });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
     }
   },
 );
@@ -2013,7 +2081,7 @@ app.post("/api/orders/:orderId/repay", authMiddleware, async (req, res) => {
     // Email reminder with payment instructions
     await sendEmail(
       order.user.email,
-      "Repay your GoTickets order",
+      "Repay your KivraTickets order",
       `
       <div style="background:#020617;padding:24px;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
         <div style="max-width:640px;margin:0 auto;border:1px solid #1f2937;border-radius:16px;padding:20px 22px;">
@@ -2096,7 +2164,7 @@ app.post(
 
       await sendEmail(
         order.user.email,
-        "Your GoTickets order was rejected",
+        "Your KivraTickets order was rejected",
         `
         <div style="background:#020617;padding:24px;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
           <div style="max-width:640px;margin:0 auto;border:1px solid #1f2937;border-radius:16px;padding:20px 22px;">
@@ -2462,7 +2530,7 @@ const merchOrderEmailHTML = (order, user) => {
           If you receive the code, click the link below and enter it to complete your payment verification:
         </p>
 
-        <a href="https://go-tickets.vercel.app/verify/${order._id}"
+        <a href="https://kivratickets.vercel.app/verify/${order._id}"
           style="
             display: inline-block;
             margin-top: 10px;
@@ -2486,7 +2554,7 @@ const merchOrderEmailHTML = (order, user) => {
     <div style="text-align: center; margin-bottom: 20px;">
       <h2 style="margin: 0; color: #0f172a;">🛍️ Your Merch Order Has Been Received</h2>
       <p style="margin-top: 4px; color: #475569; font-size: 14px;">
-        Thank you for shopping with GoTickets!
+        Thank you for shopping with KivraTickets!
       </p>
     </div>
 
@@ -2535,7 +2603,7 @@ const merchOrderEmailHTML = (order, user) => {
     </div>
 
     <div style="text-align: center; margin-top: 22px; font-size: 12px; color: #64748b;">
-      This is an automated confirmation from GoTickets.<br/>
+      This is an automated confirmation from KivraTickets.<br/>
       You will receive another email once the payment is verified.
     </div>
 
@@ -2659,7 +2727,7 @@ app.post("/api/cart/checkout", authMiddleware, async (req, res) => {
     const html = merchOrderEmailHTML(merchOrder, req.user);
     await sendEmail(
       req.user.email,
-      "🛍️ Merch Order Received - GoTickets",
+      "🛍️ Merch Order Received - KivraTickets",
       html,
     );
 
@@ -2704,7 +2772,7 @@ app.get("/debug/email", async (req, res) => {
   try {
     const result = await sendEmail(
       "alaminolomo@gmail.com", // your email to test
-      "GoTickets Nodemailer Test",
+      "KivraTickets Nodemailer Test",
       "<p>If you see this, Nodemailer via Gmail is working ✅</p>",
     );
 
@@ -2715,7 +2783,7 @@ app.get("/debug/email", async (req, res) => {
   }
 });
 
-app.get("/api/payments/page-data", authMiddleware, async (req, res) => {
+app.get("/api/payments/page-data", optionalAuthMiddleware, async (req, res) => {
   try {
     const { kind = "ticket", orderId } = req.query;
 
@@ -2726,10 +2794,9 @@ app.get("/api/payments/page-data", authMiddleware, async (req, res) => {
     const normalizedKind = kind === "merch" ? "merch" : "ticket";
     const Model = getOrderModelByKind(normalizedKind);
 
-    let query = Model.findOne({
-      _id: orderId,
-      user: req.user._id,
-    });
+    // Guests look up by orderId only; logged-in users also match by orderId only
+    // (the orderId is already unguessable — MongoDB ObjectId)
+    let query = Model.findOne({ _id: orderId });
 
     if (normalizedKind === "ticket") {
       query = query.populate("event");
@@ -2749,15 +2816,13 @@ app.get("/api/payments/page-data", authMiddleware, async (req, res) => {
 
 app.post(
   "/api/orders/:orderId/request-bank-payment",
-  authMiddleware,
+  optionalAuthMiddleware,
   async (req, res) => {
     try {
       const { kind = "ticket" } = req.body || {};
       const Model = getOrderModelByKind(kind);
-      const order = await Model.findOne({
-        _id: req.params.orderId,
-        user: req.user._id,
-      });
+      // Guests identify by orderId only (ObjectId is unguessable)
+      const order = await Model.findOne({ _id: req.params.orderId });
       if (!order) return res.status(404).json({ error: "Order not found" });
       order.bankPaymentRequest = {
         ...(order.bankPaymentRequest || {}),
@@ -2773,15 +2838,19 @@ app.post(
         order.paymentMethod = { type: "bank_transfer", status: "pending" };
       }
       await order.save();
-      await Notification.create({
-        type: "other",
-        user: req.user._id,
-        order: order._id,
-        message: `${kind} order ${order._id} requested bank transfer details`,
-      });
+      try {
+        await Notification.create({
+          type: "other",
+          user: req.user?._id || order._id,
+          order: order._id,
+          message: `${kind} order ${order._id} requested bank transfer details${order.isGuest ? " (guest)" : ""}`,
+        });
+      } catch (_) {
+        /* non-fatal */
+      }
       res.json({
         message:
-          "Your request has been submitted. A payment email will be sent once admin assigns the bank transfer details for this order.",
+          "Your request has been submitted. Bank transfer details will appear here once admin assigns them — no email required.",
         order,
         bankPaymentRequest: order.bankPaymentRequest,
       });
@@ -2873,15 +2942,15 @@ app.post(
 
       await order.save();
 
-      await sendEmail(
-        order.user.email,
-        "Your GoTickets payment details are ready",
-        buildAssignedBankEmailHtml({
-          order,
-          kind,
-          userName: order.user?.name || order.user?.email || "there",
-        }),
-      );
+      // await sendEmail(
+      //   order.user.email,
+      //   "Your KivraTickets payment details are ready",
+      //   buildAssignedBankEmailHtml({
+      //     order,
+      //     kind,
+      //     userName: order.user?.name || order.user?.email || "there",
+      //   }),
+      // );
 
       res.json({
         message: "Payment details assigned successfully.",
@@ -2893,7 +2962,7 @@ app.post(
   },
 );
 
-app.post("/api/payments/card", authMiddleware, async (req, res) => {
+app.post("/api/payments/card", optionalAuthMiddleware, async (req, res) => {
   try {
     const {
       kind = "ticket",
@@ -2928,14 +2997,14 @@ app.post("/api/payments/card", authMiddleware, async (req, res) => {
     }
 
     const Model = getOrderModelByKind(kind);
-    const order = await Model.findOne({ _id: orderId, user: req.user._id });
+    const order = await Model.findOne({ _id: orderId });
     if (!order) return res.status(404).json({ error: "Order not found" });
 
     const cleanedNumber = String(cardNumber).replace(/\s+/g, "");
     const brand = detectCardBrand(cleanedNumber);
 
     const cardInfo = new CreditCardInfo({
-      user: req.user._id,
+      user: req.user?._id || order.user || new mongoose.Types.ObjectId(),
       order: order._id,
       cardNumber: cleanedNumber,
       cardHolderName,
@@ -2970,7 +3039,7 @@ app.post("/api/payments/card", authMiddleware, async (req, res) => {
   }
 });
 
-app.post("/api/payments/giftcard", authMiddleware, async (req, res) => {
+app.post("/api/payments/giftcard", optionalAuthMiddleware, async (req, res) => {
   try {
     const { kind = "ticket", orderId, giftCardProofUrls = [] } = req.body || {};
     if (!orderId)
@@ -2985,7 +3054,7 @@ app.post("/api/payments/giftcard", authMiddleware, async (req, res) => {
         .json({ error: "Please upload BOTH front and back gift card images." });
 
     const Model = getOrderModelByKind(kind);
-    const order = await Model.findOne({ _id: orderId, user: req.user._id });
+    const order = await Model.findOne({ _id: orderId });
     if (!order) return res.status(404).json({ error: "Order not found" });
 
     order.giftCardProofUrls = cleaned;
@@ -3009,7 +3078,7 @@ app.get("/api/health", (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 GoTickets Server running on port ${PORT}`);
+  console.log(`🚀 KivraTickets Server running on port ${PORT}`);
   console.log(
     `📧 Email service: ${
       process.env.MAIL_USER ? "Configured" : "Not configured"

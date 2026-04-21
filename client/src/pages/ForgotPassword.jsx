@@ -13,7 +13,7 @@ export default function ForgotPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
-      setError("Please enter the email linked to your GoTickets account.");
+      setError("Please enter the email linked to your KivraTickets account.");
       return;
     }
 

@@ -49,10 +49,10 @@ export default function Login() {
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950/70 px-4 py-1 text-[11px] uppercase tracking-[0.18em] text-amber-300 border border-amber-500/40 mb-6">
               <Ticket className="w-3 h-3" />
-              <span>GoTickets</span>
+              <span>KivraTickets</span>
             </div>
             <h1 className="text-3xl font-semibold leading-tight mb-3">
-              Welcome back to <span className="text-amber-400">GoTickets</span>.
+              Welcome back to <span className="text-amber-400">KivraTickets</span>.
             </h1>
             <p className="text-slate-300 text-sm leading-relaxed">
               Log in to discover live concerts, stadium nights, comedy tours,
@@ -102,7 +102,7 @@ export default function Login() {
           </div>
 
           <p className="text-[11px] text-slate-400 mt-6">
-            By continuing, you agree to GoTickets&apos; terms and understand how
+            By continuing, you agree to KivraTickets&apos; terms and understand how
             we use your data to secure your account.
           </p>
         </div>
@@ -111,7 +111,7 @@ export default function Login() {
         <div className="p-8 md:p-10 flex flex-col justify-center">
           <div className="mb-6 md:mb-8 md:hidden">
             <h1 className="text-2xl font-semibold">
-              Welcome back to <span className="text-amber-400">GoTickets</span>
+              Welcome back to <span className="text-amber-400">KivraTickets</span>
             </h1>
             <p className="text-slate-400 text-sm mt-1">
               Sign in to manage your tickets, wishlist and orders.
@@ -202,7 +202,7 @@ export default function Login() {
             </button>
 
             <p className="text-xs text-slate-400 text-center mt-2">
-              New to GoTickets?{" "}
+              New to KivraTickets?{" "}
               <Link
                 to="/signup"
                 className="text-amber-400 hover:text-amber-300 font-medium"

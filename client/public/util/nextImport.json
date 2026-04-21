@@ -1,0 +1,324 @@
+[
+  {
+    "title": "Panama vs England – World Cup – Match 67 (Group L)",
+    "description": "Panama and England face off in a crucial Group L clash at MetLife Stadium.",
+    "category": "sports",
+    "venue": "MetLife Stadium",
+    "location": {
+      "city": "East Rutherford",
+      "state": "NJ",
+      "country": "USA",
+      "address": "1 MetLife Stadium Dr, East Rutherford, NJ 07073"
+    },
+    "date": "2026-06-27",
+    "time": "17:00",
+    "price": { "min": 600, "max": 1450, "currency": "USD" },
+    "totalTickets": 82500,
+    "availableTickets": 825,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "metLife",
+    "isPastEvent": false
+  },
+  {
+    "title": "Colombia vs Portugal – World Cup – Match 71 (Group K)",
+    "description": "Colombia and Portugal battle it out in an electric Group K showdown at Hard Rock Stadium.",
+    "category": "sports",
+    "venue": "Hard Rock Stadium",
+    "location": {
+      "city": "Miami Gardens",
+      "state": "FL",
+      "country": "USA",
+      "address": "347 Don Shula Dr, Miami Gardens, FL 33056"
+    },
+    "date": "2026-06-27",
+    "time": "19:30",
+    "price": { "min": 700, "max": 1400, "currency": "USD" },
+    "totalTickets": 65000,
+    "availableTickets": 1300,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "hard-rock",
+    "isPastEvent": false
+  },
+  {
+    "title": "Uzbekistan vs DR Congo – World Cup – Match 72 (Group K)",
+    "description": "Uzbekistan meets DR Congo in a thrilling Group K encounter at Mercedes-Benz Stadium.",
+    "category": "sports",
+    "venue": "Mercedes-Benz Stadium",
+    "location": {
+      "city": "Atlanta",
+      "state": "GA",
+      "country": "USA",
+      "address": "1 AMB Dr NW, Atlanta, GA 30313"
+    },
+    "date": "2026-06-27",
+    "time": "19:30",
+    "price": { "min": 500, "max": 1200, "currency": "USD" },
+    "totalTickets": 71000,
+    "availableTickets": 2130,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "benz",
+    "isPastEvent": false
+  },
+  {
+    "title": "Jordan vs Argentina – World Cup – Match 70 (Group J)",
+    "description": "Jordan takes on Argentina in a blockbuster Group J fixture at AT&T Stadium.",
+    "category": "sports",
+    "venue": "AT&T Stadium",
+    "location": {
+      "city": "Arlington",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 AT&T Way, Arlington, TX 76011"
+    },
+    "date": "2026-06-27",
+    "time": "21:00",
+    "price": { "min": 750, "max": 1400, "currency": "USD" },
+    "totalTickets": 80000,
+    "availableTickets": 1600,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "at_t",
+    "isPastEvent": false
+  },
+  {
+    "title": "Algeria vs Austria – World Cup – Match 69 (Group J)",
+    "description": "Algeria and Austria go head to head in a high-stakes Group J clash at GEHA Field.",
+    "category": "sports",
+    "venue": "GEHA Field at Arrowhead Stadium",
+    "location": {
+      "city": "Kansas City",
+      "state": "MO",
+      "country": "USA",
+      "address": "1 Arrowhead Dr, Kansas City, MO 64129"
+    },
+    "date": "2026-06-27",
+    "time": "21:00",
+    "price": { "min": 500, "max": 1100, "currency": "USD" },
+    "totalTickets": 76000,
+    "availableTickets": 2280,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "geha",
+    "isPastEvent": false
+  },
+  {
+    "title": "Cabo Verde vs Saudi Arabia – World Cup – Match 65 (Group H)",
+    "description": "Cabo Verde clashes with Saudi Arabia in a fiery Group H encounter at NRG Stadium.",
+    "category": "sports",
+    "venue": "NRG Stadium",
+    "location": {
+      "city": "Houston",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 NRG Pkwy, Houston, TX 77054"
+    },
+    "date": "2026-06-26",
+    "time": "19:00",
+    "price": { "min": 450, "max": 1050, "currency": "USD" },
+    "totalTickets": 72000,
+    "availableTickets": 1440,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "nrg",
+    "isPastEvent": false
+  },
+  {
+    "title": "New Zealand vs Belgium – World Cup – Match 64 (Group G)",
+    "description": "New Zealand face Belgium in a captivating Group G battle at BC Place.",
+    "category": "sports",
+    "venue": "BC Place Stadium",
+    "location": {
+      "city": "Vancouver",
+      "state": "BC",
+      "country": "Canada",
+      "address": "777 Pacific Blvd, Vancouver, BC V6B 4Y8"
+    },
+    "date": "2026-06-26",
+    "time": "20:00",
+    "price": { "min": 480, "max": 1100, "currency": "USD" },
+    "totalTickets": 54500,
+    "availableTickets": 1635,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "bcPlace",
+    "isPastEvent": false
+  },
+  {
+    "title": "Egypt vs Iran – World Cup – Match 63 (Group G)",
+    "description": "Egypt and Iran collide in a gripping Group G fixture at Lumen Field.",
+    "category": "sports",
+    "venue": "Lumen Field",
+    "location": {
+      "city": "Seattle",
+      "state": "WA",
+      "country": "USA",
+      "address": "800 Occidental Ave S, Seattle, WA 98134"
+    },
+    "date": "2026-06-26",
+    "time": "20:00",
+    "price": { "min": 490, "max": 1050, "currency": "USD" },
+    "totalTickets": 69000,
+    "availableTickets": 1380,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "lumen",
+    "isPastEvent": false
+  },
+  {
+    "title": "Croatia vs Ghana – World Cup – Match 68 (Group L)",
+    "description": "Croatia and Ghana go toe to toe in a riveting Group L contest at Lincoln Financial Field.",
+    "category": "sports",
+    "venue": "Lincoln Financial Field",
+    "location": {
+      "city": "Philadelphia",
+      "state": "PA",
+      "country": "USA",
+      "address": "1 Lincoln Financial Field Way, Philadelphia, PA 19148"
+    },
+    "date": "2026-06-27",
+    "time": "17:00",
+    "price": { "min": 500, "max": 1100, "currency": "USD" },
+    "totalTickets": 69800,
+    "availableTickets": 2094,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "lincoln",
+    "isPastEvent": false
+  },
+  {
+    "title": "Japan vs Sweden – World Cup – Match 57 (Group F)",
+    "description": "Japan and Sweden face off in an intense Group F clash at AT&T Stadium.",
+    "category": "sports",
+    "venue": "AT&T Stadium",
+    "location": {
+      "city": "Arlington",
+      "state": "TX",
+      "country": "USA",
+      "address": "1 AT&T Way, Arlington, TX 76011"
+    },
+    "date": "2026-06-25",
+    "time": "18:00",
+    "price": { "min": 550, "max": 1200, "currency": "USD" },
+    "totalTickets": 80000,
+    "availableTickets": 800,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "at_t",
+    "isPastEvent": false
+  },
+  {
+    "title": "Tunisia vs Netherlands – World Cup – Match 58 (Group F)",
+    "description": "Tunisia take on the Netherlands in a thrilling Group F encounter at GEHA Field.",
+    "category": "sports",
+    "venue": "GEHA Field at Arrowhead Stadium",
+    "location": {
+      "city": "Kansas City",
+      "state": "MO",
+      "country": "USA",
+      "address": "1 Arrowhead Dr, Kansas City, MO 64129"
+    },
+    "date": "2026-06-25",
+    "time": "18:00",
+    "price": { "min": 520, "max": 1150, "currency": "USD" },
+    "totalTickets": 76000,
+    "availableTickets": 2280,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "geha",
+    "isPastEvent": false
+  },
+  {
+    "title": "Paraguay vs Australia – World Cup – Match 60 (Group D)",
+    "description": "Paraguay clash with Australia in an enthralling Group D contest at Levi's Stadium.",
+    "category": "sports",
+    "venue": "Levi's Stadium",
+    "location": {
+      "city": "Santa Clara",
+      "state": "CA",
+      "country": "USA",
+      "address": "4900 Marie P DeBartolo Way, Santa Clara, CA 95054"
+    },
+    "date": "2026-06-25",
+    "time": "19:00",
+    "price": { "min": 580, "max": 1300, "currency": "USD" },
+    "totalTickets": 68500,
+    "availableTickets": 1370,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "levi",
+    "isPastEvent": false
+  },
+  {
+    "title": "USA vs Turkey – World Cup – Match 59 (Group D)",
+    "description": "The USA hosts Turkey in a sold-out Group D spectacle at SoFi Stadium.",
+    "category": "sports",
+    "venue": "SoFi Stadium",
+    "location": {
+      "city": "Inglewood",
+      "state": "CA",
+      "country": "USA",
+      "address": "1001 Stadium Dr, Inglewood, CA 90301"
+    },
+    "date": "2026-06-25",
+    "time": "19:00",
+    "price": { "min": 700, "max": 1400, "currency": "USD" },
+    "totalTickets": 70240,
+    "availableTickets": 703,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "sofi",
+    "isPastEvent": false
+  },
+  {
+    "title": "Senegal vs Iraq – World Cup – Match 62 (Group I)",
+    "description": "Senegal face Iraq in a high-energy Group I showdown at BMO Field.",
+    "category": "sports",
+    "venue": "BMO Field",
+    "location": {
+      "city": "Toronto",
+      "state": "ON",
+      "country": "Canada",
+      "address": "170 Princes' Blvd, Toronto, ON M6K 3C3"
+    },
+    "date": "2026-06-26",
+    "time": "15:00",
+    "price": { "min": 460, "max": 1050, "currency": "USD" },
+    "totalTickets": 30000,
+    "availableTickets": 600,
+    "images": [
+      "https://media.vsstatic.com/image/upload/if_fc_gte_1/g_auto,q_auto,c_fill,w_1680,h_720/if_else/g_center,q_auto,c_fill,w_1680,h_720/if_end/dpr_auto,f_auto/hero/event/sports/944-world-cup-soccer/fifa-world-cup-tickets-4.jpg"
+    ],
+    "venueType": "svg-stadium",
+    "svgKey": "bmo",
+    "isPastEvent": false
+  }
+]
