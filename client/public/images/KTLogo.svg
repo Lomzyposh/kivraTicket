@@ -1,0 +1,43 @@
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="1024" height="1024">
+  <!-- Dark navy background -->
+  <rect width="1024" height="1024" fill="#151f2e"/>
+
+  <!-- Ticket shape with notches on left and right sides -->
+  <path d="
+    M 180 330
+    L 855 330
+    Q 880 330 880 355
+    L 880 455
+    Q 855 455 855 480
+    Q 855 505 880 505
+    L 880 690
+    Q 880 715 855 715
+    L 180 715
+    Q 155 715 155 690
+    L 155 585
+    Q 180 585 180 560
+    Q 180 535 155 535
+    L 155 355
+    Q 155 330 180 330
+    Z
+  " fill="#f5b800"/>
+
+  <!-- K letter: stem + upper arm + lower arm -->
+  <!-- Vertical stem -->
+  <rect x="235" y="375" width="82" height="280" fill="#151f2e" rx="4"/>
+
+  <!-- Upper arm of K (diagonal going upper-right) -->
+  <polygon points="317,522 317,375 400,375 400,430 360,522" fill="#151f2e"/>
+
+  <!-- Lower arm of K (diagonal going lower-right) -->
+  <polygon points="317,522 360,522 420,655 335,655" fill="#151f2e"/>
+
+  <!-- Cover the join point at center -->
+  <rect x="317" y="505" width="43" height="36" fill="#151f2e"/>
+
+  <!-- T letter -->
+  <!-- Top horizontal bar -->
+  <rect x="478" y="375" width="300" height="76" fill="#151f2e" rx="4"/>
+  <!-- Vertical stem -->
+  <rect x="590" y="375" width="84" height="280" fill="#151f2e" rx="4"/>
+</svg>
