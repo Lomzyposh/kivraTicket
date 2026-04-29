@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
-import { useAuth } from "../context/AuthContext";
 import {
   ArrowLeft,
   ShoppingCart,
@@ -24,7 +23,6 @@ function currencySymbol(code) {
 }
 
 export default function Cart() {
-  const { user } = useAuth();
   const navigate = useNavigate();
 
   const [cart, setCart] = useState(null);
@@ -57,7 +55,7 @@ export default function Cart() {
     };
 
     fetchCart();
-  }, [user, navigate]);
+  }, [navigate]);
 
   const currency = useMemo(() => cart?.items?.[0]?.currency || "USD", [cart]);
 

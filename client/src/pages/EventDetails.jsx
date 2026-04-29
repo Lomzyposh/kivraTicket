@@ -67,7 +67,6 @@ function pickerType(event) {
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
 
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -175,8 +174,7 @@ export default function EventDetails() {
     }
   };
 
-  const isPastEvent =
-    event?.isPastEvent || (event && new Date(event.date) < new Date());
+  const isPastEvent = event?.isPastEvent ?? false;
   const availableTickets = event?.availableTickets ?? null;
   const pType = pickerType(event);
 

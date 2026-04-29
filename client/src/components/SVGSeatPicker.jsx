@@ -947,16 +947,17 @@ export default function SVGSeatPicker({ event, onConfirm, onClose }) {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
                 <div className="svgsp-spinner" />
                 <p style={{ color: "#64748b", marginTop: 12, fontSize: 13 }}>
                   Loading stadium map…
                 </p>
-                <p style={{ color: "#334155", fontSize: 11, marginTop: 4 }}>
+                {/* <p style={{ color: "#334155", fontSize: 11, marginTop: 4 }}>
                   Place your SVG at /public/stadiums/
                   {event?.svgKey ?? "hard-rock"}.svg
-                </p>
+                </p> */}
               </div>
             )}
 

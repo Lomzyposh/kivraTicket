@@ -99,15 +99,15 @@ export default function MyOrders() {
   const [resendStatus, setResendStatus] = useState({});
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login", {
-        state: {
-          from: "/my-orders",
-          message: "Sign in to view your orders.",
-        },
-      });
-      return;
-    }
+    // if (!user) {
+    //   navigate("/login", {
+    //     state: {
+    //       from: "/my-orders",
+    //       message: "Sign in to view your orders.",
+    //     },
+    //   });
+    //   return;
+    // }
 
     let active = true;
 
@@ -134,7 +134,7 @@ export default function MyOrders() {
     return () => {
       active = false;
     };
-  }, [user, navigate]);
+  }, [navigate]);
 
   const handleRefresh = async () => {
     try {

@@ -94,8 +94,8 @@ export default function PaymentPage() {
     expYear: "",
     cvv: "",
     billingAddress: {
-      fullName: user?.name || "",
-      email: user?.email || "",
+      // fullName: user?.name || "",
+      // email: user?.email || "",
       phone: "",
       addressLine1: "",
       addressLine2: "",
@@ -332,8 +332,8 @@ export default function PaymentPage() {
         cvv: cardForm.cvv,
         billingAddress: billingSame
           ? {
-              fullName: user?.name || cardForm.cardHolderName,
-              email: user?.email || "",
+              // fullName: user?.name || cardForm.cardHolderName,
+              // email: user?.email || "",
               phone: order?.deliveryAddress?.phone || "",
               addressLine1:
                 order?.deliveryAddress?.street || "Customer billing address",
