@@ -10,7 +10,6 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import api from "../api/axios";
-import { useAuth } from "../context/AuthContext";
 import SeatPicker from "../components/SeatPicker";
 import SVGSeatPicker from "../components/SVGSeatPicker";
 
@@ -74,7 +73,6 @@ export default function EventDetails() {
   const [error, setError] = useState("");
   const [wishlistMessage, setWishlistMessage] = useState("");
   const [addingWishlist, setAddingWishlist] = useState(false);
-  const [seatSelection, setSeatSelection] = useState(null);
   const [showSeatPicker, setShowSeatPicker] = useState(false);
 
   useEffect(() => {
@@ -121,7 +119,6 @@ export default function EventDetails() {
   // ── Unified seat confirm handler ──────────────────────────────
   // Works for both SVGSeatPicker and legacy SeatPicker payloads
   const handleSeatConfirm = (selection) => {
-    setSeatSelection(selection);
     const params = new URLSearchParams();
     params.set("eventId", event._id);
 
@@ -154,10 +151,6 @@ export default function EventDetails() {
   };
 
   const handleWishlist = async () => {
-    if (!user) {
-      setWishlistMessage("Sign in to save events to your wishlist.");
-      return;
-    }
     try {
       setAddingWishlist(true);
       setWishlistMessage("");
