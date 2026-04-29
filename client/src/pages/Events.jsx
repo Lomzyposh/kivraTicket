@@ -96,7 +96,6 @@ export default function Events() {
     return params;
   }, [filters]);
 
-  // Sync filters to URL whenever they change (after first touch)
   useEffect(() => {
     if (!touched) return;
     const urlParams = new URLSearchParams();
@@ -143,7 +142,7 @@ export default function Events() {
     return () => {
       active = false;
     };
-  }, [searchParams, hasSyncedReal]);
+  }, [searchParams]);
 
   const handleFilterChange = (key, value) => {
     setTouched(true);

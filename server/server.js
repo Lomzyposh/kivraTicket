@@ -22,8 +22,21 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://kivra-tickets.vercel.app"],
-  }),
+    origin: (origin, callback) => {
+      const allowed = [
+        "http://localhost:5173",
+        "https://kivra-tickets.vercel.app",
+        // add any preview/www variants here
+      ];
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
 );
 
 // MongoDB Connection
